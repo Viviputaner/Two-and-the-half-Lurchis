@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lurchi-Adventskalender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Grundtöne */
+    --bg: #fbf6f1;
+    --white: #ffffff;
+    --ink: #2b3a33;
+    --muted: #6f7f76;
+
+    /* Pastell-Grün */
+    --mint-50: #f0f8f3;
+    --mint: #d4ecdc;
+    --mint-2: #b3dbc1;
+    --sage: #6fa786;
+    --green-ink: #2f5a45;
+
+    /* Pastell-Rot */
+    --blush-50: #fdf1f0;
+    --blush: #f8d7d5;
+    --rose: #f0a7a4;
+    --rose-strong: #e3817d;
+    --red-ink: #b94a47;
+
+    /* Unterstützende Farben */
+    --butter-50: #fffaeb;
+    --butter: #f9e8b6;
+    --sky: #d9edf5;
+    --sky-ink: #3f6f86;
+
+    --shadow-soft: 0 10px 30px rgba(47, 90, 69, .10);
+    --shadow-lift: 0 16px 40px rgba(47, 90, 69, .16);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(60% 45% at 8% 0%, rgba(248, 215, 213, .75), transparent 70%),
+      radial-gradient(55% 40% at 100% 10%, rgba(212, 236, 220, .85), transparent 70%),
+      radial-gradient(70% 45% at 50% 110%, rgba(217, 237, 245, .9), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    padding: 54px 16px 64px;
+  }
+
+  #snow { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+  /* ---------- Lichterkette ---------- */
+  .lights {
+    position: fixed; top: 0; left: 0; right: 0; height: 40px; z-index: 5;
+    display: flex; justify-content: space-around; pointer-events: none;
+  }
+  .lights::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 30px;
+    border-bottom: 2px solid #c6d9cd; border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  }
+  .lights span {
+    width: 11px; height: 17px; margin-top: 12px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative; animation: blink 2.2s infinite alternate ease-in-out;
+    background: var(--c); box-shadow: 0 3px 14px 2px var(--c);
+  }
+  .lights span::before {
+    content: ""; position: absolute; top: -4px; left: 3px; width: 5px; height: 5px;
+    background: #9fb8aa; border-radius: 2px;
+  }
+  .lights span:nth-child(4n+1) { --c: #f3a3a0; }
+  .lights span:nth-child(4n+2) { --c: #f6dc8f; animation-delay: .5s; }
+  .lights span:nth-child(4n+3) { --c: #9fd6b2; animation-delay: 1s; }
+  .lights span:nth-child(4n+4) { --c: #a9d6ea; animation-delay: 1.5s; }
+  @keyframes blink { 0% { opacity: 1; } 100% { opacity: .45; box-shadow: none; } }
+
+  /* ---------- Kopf ---------- */
+  .hero {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto 26px;
+    display: grid; align-items: center; gap: 8px 18px;
+    grid-template-columns: 1fr minmax(0, 2fr) 1fr;
+    grid-template-areas: "l1 text l2";
+  }
+  .hero-text { grid-area: text; text-align: center; }
+  .hero-lurch { width: 100%; max-width: 220px; height: auto; justify-self: center; filter: drop-shadow(0 12px 14px rgba(47, 90, 69, .18)); }
+  .hero-lurch.l1 { grid-area: l1; animation: float 5s ease-in-out infinite; }
+  .hero-lurch.l2 { grid-area: l2; max-width: 250px; animation: float 5.5s ease-in-out infinite .8s; }
+  @keyframes float { 50% { transform: translateY(-8px) rotate(-2deg); } }
+
+  .eyebrow {
+    display: inline-block; font-weight: 800; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--red-ink); background: var(--blush); padding: 5px 12px; border-radius: 999px;
+  }
+  h1 {
+    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 700;
+    font-size: clamp(2.1rem, 5.4vw, 3.4rem); line-height: 1.02; letter-spacing: -.01em;
+    margin: 12px 0 8px; color: var(--green-ink);
+  }
+  h1 span { color: var(--rose-strong); display: block; }
+  .subtitle { color: var(--muted); font-size: 1.08rem; margin: 0; }
+  .countdown {
+    display: inline-block; margin-top: 14px; font-weight: 800; color: var(--green-ink);
+    background: var(--white); padding: 8px 16px; border-radius: 999px; box-shadow: var(--shadow-soft);
+  }
+  .countdown:empty { display: none; }
+  @media (max-width: 700px) {
+    .hero { grid-template-columns: 1fr 1fr; grid-template-areas: "text text" "l1 l2"; }
+    .hero-lurch { max-width: 150px; }
+    .hero-lurch.l2 { max-width: 175px; }
+  }
+
+  /* ---------- Kalender ---------- */
+  .cal-wrap { position: relative; max-width: 960px; margin: 0 auto; }
+  .calendar {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-flow: dense;
+    gap: 14px;
+    padding: 22px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, .62);
+    border: 1px solid rgba(255, 255, 255, .9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lift);
+  }
+  @media (max-width: 700px) { .calendar { grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 14px; border-radius: 24px; } }
+  @media (max-width: 420px) { .calendar { grid-template-columns: repeat(3, 1fr); } }
+
+  .slot { aspect-ratio: 1 / 1; perspective: 900px; position: relative; }
+  .slot.big { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+
+  .inside {
+    position: absolute; inset: 0; border-radius: var(--radius);
+    background: var(--white);
+    border: 2px dashed var(--mint-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+  }
+  .slot.big .inside { font-size: clamp(3rem, 9vw, 4.6rem); }
+
+  .door {
+    position: absolute; inset: 0; border: none; padding: 0; cursor: pointer;
+    border-radius: var(--radius); background: none;
+    transform-origin: left center; transform-style: preserve-3d;
+    transition: transform .9s cubic-bezier(.6,-0.1,.3,1.2), opacity .3s;
+    font: inherit; color: inherit;
+  }
+  .door .face, .door .back {
+    position: absolute; inset: 0; border-radius: var(--radius);
+    backface-visibility: hidden; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Farbvarianten + Lurch-Punkte als Muster */
+  .door .face {
+    --bgc: var(--mint); --spot: rgba(111, 167, 134, .28); --num: var(--green-ink);
+    background:
+      radial-gradient(circle at 80% 20%, var(--spot) 0 6%, transparent 6.5%),
+      radial-gradient(circle at 90% 36%, var(--spot) 0 3.5%, transparent 4%),
+      radial-gradient(circle at 70% 33%, var(--spot) 0 2.5%, transparent 3%),
+      radial-gradient(circle at 14% 84%, var(--spot) 0 4%, transparent 4.5%),
+      linear-gradient(160deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 55%),
+      var(--bgc);
+    box-shadow: 0 6px 16px rgba(47, 90, 69, .12), inset 0 0 0 1px rgba(255, 255, 255, .7);
+  }
+  .slot.c-blush  .door .face { --bgc: var(--blush);  --spot: rgba(227, 129, 125, .28); --num: var(--red-ink); }
+  .slot.c-white  .door .face { --bgc: #ffffff;       --spot: rgba(111, 167, 134, .22); --num: var(--green-ink); }
+  .slot.c-butter .door .face { --bgc: var(--butter); --spot: rgba(214, 170, 60, .25);  --num: #8a6514; }
+  .slot.c-sky    .door .face { --bgc: var(--sky);    --spot: rgba(63, 111, 134, .18);  --num: var(--sky-ink); }
+  .slot.c-rose   .door .face { --bgc: var(--rose);   --spot: rgba(255, 255, 255, .35); --num: #ffffff; }
+  .door .back {
+    background: var(--mint-50);
+    transform: rotateY(180deg);
+  }
+  .num {
+    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600;
+    font-size: clamp(1.5rem, 4.6vw, 2.3rem);
+    color: var(--num);
+    position: relative; z-index: 1;
+  }
+  /* Große Türen (6 und 24): kräftigerer Verlauf, große Zahl, Unterzeile */
+  .slot.big .door .face {
+    flex-direction: column; gap: 4px;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255, 255, 255, .35) 0 9%, transparent 9.5%),
+      radial-gradient(circle at 90% 34%, rgba(255, 255, 255, .3) 0 5%, transparent 5.5%),
+      radial-gradient(circle at 14% 86%, rgba(255, 255, 255, .3) 0 7%, transparent 7.5%),
+      radial-gradient(circle at 24% 74%, rgba(255, 255, 255, .25) 0 3.5%, transparent 4%),
+      linear-gradient(145deg, var(--g1), var(--g2));
+    box-shadow: 0 10px 26px rgba(47, 90, 69, .18), inset 0 0 0 6px rgba(255, 255, 255, .45);
+  }
+  .slot.big.b-rose .door .face { --g1: #f6bdba; --g2: #e3817d; }
+  .slot.big.b-mint .door .face { --g1: #bfe3cb; --g2: #6fa786; }
+  .slot.big .num { font-size: clamp(3rem, 10vw, 5.4rem); color: #ffffff; text-shadow: 0 3px 12px rgba(0, 0, 0, .12); line-height: 1; }
+  .big-label {
+    position: relative; z-index: 1;
+    font-weight: 800; font-size: clamp(.7rem, 1.8vw, .9rem); letter-spacing: .16em; text-transform: uppercase;
+    color: #ffffff; background: rgba(255, 255, 255, .22); padding: 5px 12px; border-radius: 999px;
+  }
+  .door:hover:not([disabled]) { transform: rotateY(-12deg) translateY(-2px); }
+  .door:focus-visible { outline: 3px solid var(--rose-strong); outline-offset: 3px; }
+  /* Nach dem Öffnen: Tür schwingt auf und verschwindet, damit sie keine Nachbartüren verdeckt */
+  .slot.open .door {
+    transform: rotateY(-115deg); opacity: 0; pointer-events: none;
+    transition: transform .9s cubic-bezier(.6,-0.1,.3,1.2), opacity .35s ease .55s;
+  }
+  .slot.open .inside { cursor: pointer; transition: transform .2s, border-color .2s; }
+  .slot.open .inside:hover { transform: scale(1.04); border-color: var(--rose); }
+  .slot.today .door .face { animation: glow 2s ease-in-out infinite; }
+  .slot.locked .door .face { filter: saturate(.75); opacity: .85; }
+  .slot.shake .door { animation: shake .45s; }
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(227, 129, 125, .0), 0 6px 16px rgba(47, 90, 69, .12); }
+    50%     { box-shadow: 0 0 0 6px rgba(227, 129, 125, .35), 0 6px 16px rgba(47, 90, 69, .12); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px) rotate(-2deg); }
+    40% { transform: translateX(6px) rotate(2deg); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-lurch, .lights span { animation: none !important; }
+  }
+
+  /* ---------- Popup ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10;
+    background: rgba(47, 90, 69, .28);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+  .card {
+    background: var(--white); color: var(--ink);
+    max-width: 680px; width: 100%; max-height: calc(100vh - 32px); overflow-y: auto;
+    border-radius: 28px; padding: 0 26px 22px; text-align: left; position: relative;
+    box-shadow: 0 30px 80px rgba(47, 90, 69, .25);
+    transform: translateY(24px) scale(.96); transition: transform .4s cubic-bezier(.3,1.4,.5,1);
+  }
+  .overlay.show .card { transform: none; }
+  .card-head {
+    text-align: center; margin: 0 -26px 18px; padding: 30px 26px 20px;
+    background: linear-gradient(135deg, var(--mint-50), var(--blush-50));
+    border-bottom: 1px solid #eef2ef;
+  }
+  .card .emoji { font-size: 3rem; line-height: 1; }
+  .card .date { font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: .75rem; color: var(--red-ink); margin-top: 8px; }
+  .card h2 {
+    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600;
+    color: var(--green-ink); font-size: 1.9rem; margin: 4px 0 10px; line-height: 1.15;
+  }
+  .chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .chip {
+    display: inline-block; font-size: .78rem; font-weight: 800;
+    color: var(--green-ink); background: var(--mint); padding: 4px 12px; border-radius: 999px;
+  }
+  .chip.act { color: var(--red-ink); background: var(--blush); }
+  .pic { margin: 4px 0 16px; }
+  .pic img {
+    display: block; width: 100%; height: auto; max-height: 360px; object-fit: cover;
+    border-radius: 16px; box-shadow: var(--shadow-soft);
+  }
+  .pic figcaption { font-size: .85rem; color: var(--muted); text-align: center; margin-top: 6px; font-style: italic; }
+  .card-body p { font-size: 1.02rem; line-height: 1.65; margin: 0 0 11px; }
+  .card-body .speaker { font-weight: 800; color: var(--red-ink); }
+  .card-body ul { margin: 0 0 12px; padding-left: 22px; line-height: 1.6; }
+  .letter {
+    font-family: Georgia, 'Times New Roman', serif; font-size: .98rem; line-height: 1.6;
+    background: #fffefb;
+    border: 1px solid #e3ebe6; border-left: 4px solid var(--rose); border-radius: 12px;
+    padding: 16px 20px; margin: 4px 0 14px; box-shadow: var(--shadow-soft);
+  }
+  /* Hängender Einzug: Umbrüche rücken ein, die Anfangsbuchstaben bleiben eine saubere Spalte */
+  .letter div { margin: 0 0 2px; padding-left: 1.4em; text-indent: -1.4em; }
+  .letter .sig { margin-top: 6px; font-style: italic; }
+  .note {
+    background: var(--butter-50); border: 1px solid var(--butter);
+    padding: 14px 16px; margin: 4px 0 14px; border-radius: 12px;
+    font-style: italic; line-height: 1.6; transform: rotate(-.5deg);
+  }
+  .note .label { font-style: normal; font-weight: 800; font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; display: block; margin-bottom: 4px; color: #8a6514; }
+  .fact {
+    background: var(--mint-50); border: 1px solid var(--mint); border-radius: 14px;
+    padding: 12px 16px; margin: 10px 0 14px; line-height: 1.6;
+  }
+  .fact b { display: block; color: var(--green-ink); margin-bottom: 3px; }
+  .interaction { margin-top: 20px; border-top: 2px dashed var(--mint); padding-top: 18px; }
+  .interaction h3 {
+    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600;
+    margin: 0 0 8px; font-size: 1.2rem; color: var(--red-ink);
+  }
+  .interaction .q { font-weight: 800; margin: 14px 0 4px; }
+  .opt {
+    display: block; width: 100%; text-align: left; cursor: pointer;
+    background: var(--white); color: var(--ink); border: 2px solid #e6ece8; border-radius: 14px;
+    padding: 10px 14px; margin: 6px 0; font: inherit; font-weight: 700; line-height: 1.4;
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .opt:hover:not([disabled]) { border-color: var(--sage); transform: translateX(2px); }
+  .opt[disabled] { cursor: default; }
+  .opt.chosen  { border-color: var(--sage); background: var(--mint-50); }
+  .opt.correct { border-color: var(--sage); background: var(--mint); }
+  .opt.wrong   { border-color: var(--rose-strong); background: var(--blush); }
+  .opt.correct::after, .opt.wrong::after { float: right; margin-left: 10px; font-weight: 800; }
+  .opt.correct::after { content: "✓"; color: var(--green-ink); }
+  .opt.wrong::after   { content: "✗"; color: var(--red-ink); }
+  .result {
+    background: var(--butter-50); border: 1px solid var(--butter); border-radius: 14px;
+    padding: 12px 16px 2px; margin-top: 12px;
+  }
+  .match-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+  .match-row span { font-weight: 800; flex: 1 1 160px; }
+  .match-row select {
+    flex: 1 1 220px; min-width: 0; max-width: 100%;
+    font: inherit; padding: 8px 10px; border-radius: 12px; border: 2px solid #e6ece8; background: var(--white); color: var(--ink);
+  }
+  .match-row select.ok  { border-color: var(--sage); background: var(--mint); }
+  .match-row select.bad { border-color: var(--rose-strong); background: var(--blush); }
+  .btn {
+    background: var(--sage); color: var(--white); border: none;
+    padding: 11px 28px; border-radius: 999px; font: inherit; font-weight: 800; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(111, 167, 134, .35); transition: background .15s, transform .15s;
+  }
+  .btn:hover { background: #5b9474; transform: translateY(-1px); }
+  .btn.small { padding: 8px 20px; margin-top: 8px; }
+  .card-foot { text-align: center; margin-top: 20px; }
+  .x {
+    position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; z-index: 2;
+    border: none; background: rgba(255, 255, 255, .85); color: var(--green-ink); font-size: 1.3rem; cursor: pointer; line-height: 1;
+    box-shadow: 0 2px 8px rgba(47, 90, 69, .12);
+  }
+  .x:hover { background: var(--white); }
+  .x:focus-visible, .btn:focus-visible, .opt:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; z-index: 20;
+    transform: translate(-50%, 140px);
+    background: var(--white); color: var(--green-ink); font-weight: 800;
+    padding: 12px 20px; border-radius: 999px; box-shadow: var(--shadow-lift);
+    transition: transform .35s cubic-bezier(.3,1.5,.5,1);
+    max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { transform: translate(-50%, 0); }
+
+  .previewbar {
+    position: relative; z-index: 1; max-width: 960px; margin: 0 auto 18px;
+    background: var(--butter); color: #6b4e0f; border-radius: 999px; padding: 8px 10px 8px 18px;
+    display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;
+    font-weight: 700; font-size: .9rem; text-align: center;
+  }
+  .previewbar button {
+    background: var(--white); color: #6b4e0f; border: none; border-radius: 999px;
+    padding: 6px 14px; font: inherit; font-weight: 800; cursor: pointer;
+  }
+  footer { text-align: center; color: var(--muted); margin-top: 26px; font-size: .88rem; position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<div class="lights" id="lights"></div>
+<canvas id="snow"></canvas>
+
+<header class="hero">
+  <img class="hero-lurch l1" src="bilder/lurch-1.webp" alt="Lurch 1 mit Weihnachtsmütze">
+  <div class="hero-text">
+    <span class="eyebrow">Seerosenhof · Raum 464</span>
+    <h1>Lurchi-<span>Adventskalender</span></h1>
+    <p class="subtitle">24 Türchen bis zur Weihnachtsinspektion</p>
+    <div class="countdown" id="countdown"></div>
+  </div>
+  <img class="hero-lurch l2" src="bilder/lurch-2-und-der-halbe.webp" alt="Lurch 2 mit Schal, der Halbe sitzt auf seinem Rücken">
+</header>
+
+<div class="previewbar" id="previewbar" hidden>
+  <span id="previewtext"></span>
+  <button id="resetbtn">Alle Türen wieder schließen</button>
+</div>
+
+<div class="cal-wrap">
+  <main class="calendar" id="calendar"></main>
+</div>
+
+<footer>Tipp: Die Türchen sind gemischt – such die richtige Zahl!</footer>
+
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="card" id="card">
+    <button class="x" id="m-x" aria-label="Schließen">×</button>
+    <div class="card-head">
+      <div class="emoji" id="m-emoji"></div>
+      <div class="date" id="m-date"></div>
+      <h2 id="m-title"></h2>
+      <div class="chips" id="m-meta"></div>
+    </div>
+    <div class="card-body" id="m-body"></div>
+    <div class="card-foot"><button class="btn" id="m-close">Schließen</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================
+   EINSTELLUNG
+   true  = Vorschau: alle Türen lassen sich sofort öffnen
+   false = echter Kalender: Türen erst ab ihrem Datum
+   ===================================================== */
+const ALLE_TUEREN_OFFEN = true;
+
+/* =====================================================
+   INHALTE
+   Aufbau eines Türchens:
+     emoji, title, act, focus
+     story: Liste aus
+       "Text"                 -> Erzähltext
+       ["Sprecher", "Text"]   -> Dialogzeile
+       { letter: true }       -> Reihers Brief (siehe LETTER)
+       { note: [...], label } -> Zettel / Postkarte
+       { fact: "..." }        -> Kasten „Aus dem echten Sumpf“ an dieser Stelle
+       { image: "bilder/x.jpg", caption: "..." } -> Bild mitten in der Geschichte
+     image: "bilder/x.jpg"    -> Titelbild oben im Türchen (optional)
+     fact + factAfter: true   -> Sumpf-Kasten erst nach der Lösung zeigen
+     interaction: { kind: "choice" | "quiz" | "reveal" | "match" | "info", ... }
+   ===================================================== */
+
+/* Jede Zeile beginnt mit einem bestimmten Buchstaben – nicht umbrechen oder umsortieren! */
+const LETTER = [
+  "Liebe Mieter 1, 2 und ½,",
+  "am 24. Dezember um 18 Uhr kommt die Weihnachtsinspektion.",
+  "Die Wohnung muss festlich, bewohnt und konfliktfrei sein.",
+  "Ein Fernbleiben ist nicht vorgesehen.",
+  "Termin und Uhrzeit sind verbindlich.",
+  "Mängel werden schriftlich festgehalten.",
+  "Im Falle von Beanstandungen folgen Konsequenzen.",
+  "Chancen zur Nachbesserung bestehen nicht.",
+  "Haustiere sind gestattet.",
+  "Eine Rückfrage ist nicht erforderlich.",
+  "Individuelle Absprachen sind nicht möglich.",
+  "Näheres wird am 24. persönlich besprochen.",
+  "Mit freundlichen Grüßen, H. Reiher",
+];
+
+const ACT1 = "Akt 1";
+const ACT2 = "Akt 2: Die Vorbereitung";
+const ACT3 = "Akt 3: Der Verdacht";
+const ACT4 = "Akt 4: Die Wende";
+const FINALE = "Das Finale";
+
+const DOORS = [
+  /* ---------- 1 ---------- */
+  { emoji: "✉️", title: "Einschreiben", act: ACT1, focus: "alle drei",
+    story: [
+      "Der Seerosenhof ist ein Wohnhaus am Teich. Im vierten Stock, in Raum 464, wohnen drei Lurche. Es ist der 1. Dezember, früh am Morgen.",
+      "Es klopft einmal. Als Lurch 1 die Tür öffnet, ist niemand mehr zu sehen. Auf der Fußmatte liegt ein Brief. Das war der Wasserläufer, der Paketbote des Hauses. Er ist der schnellste im ganzen Teich. Zuverlässig ist er nicht. Der Brief wurde offenbar im Vorbeilaufen geworfen.",
+      ["Lurch 1", "„Ein Einschreiben vom Vermieter, Herrn Reiher. Nur zur Sicherheit: Setzt euch alle.“"],
+      ["Lurch 2", "„Ich sitze schon.“"],
+      "Der Brief lautet:",
+      { letter: true },
+      ["Lurch 1", "„Weihnachtsinspektion. Festlich, bewohnt, konfliktfrei. Und wenn nicht, gibt es Konsequenzen. Er schreibt nicht, welche. Das ist das Schlimmste an Konsequenzen.“"],
+      ["Lurch 2", "„Rein hypothetisch können Konsequenzen auch etwas Gutes sein.“"],
+      ["Lurch 1", "„Konsequenzen sind nie etwas Gutes.“"],
+      ["Der Halbe", "„Er hat uns durchnummeriert! Mieter 1, Mieter 2 und Mieter ½. Ich zähle nur halb dann zahle ich auch nur halb!“"],
+      ["Lurch 1", "„Das ist nicht der Punkt.“"],
+      "Lurch 1 sieht auf den Kalender an der Wand. Es sind noch 23 Tage bis zum 24. Dezember. Sein Bommel zittert.",
+    ],
+    interaction: { kind: "quiz", title: "Was sollten die drei als Erstes tun?",
+      prompt: ["Nur eine Antwort ist richtig."],
+      questions: [
+        { upper: true, options: [
+            "Tee trinken und hoffen, dass es vorbeigeht.",
+            "Herrn Reiher fragen, was er meint.",
+            "Die Wohnung prüfen: Was ist schon festlich, bewohnt und konfliktfrei?",
+            "Wegziehen.",
+          ], correct: 2,
+          feedback: [
+            "Der Halbe: „Das ist mein Plan!“ Lurch 1: „Das ist kein Plan.“",
+            "Im Brief steht: „Eine Rückfrage ist nicht erforderlich.“ Das wäre unhöflich.",
+            null,
+            "Lurch 2: „Das ist die Theorie, die ich am wenigsten mag.“",
+          ] },
+      ],
+      solution: ["Lösung: C. Lurch 1 holt sein Klemmbrett. Morgen beginnt die Bestandsaufnahme."],
+    },
+  },
+
+  /* ---------- 2 ---------- */
+  { emoji: "📋", title: "Bestandsaufnahme", act: ACT1, focus: "Lurch 1",
+    story: [
+      "Am nächsten Morgen geht Lurch 1 mit dem Klemmbrett durch die Wohnung. Er hat in der Nacht überlegt, was der Brief verlangt, und eine Mängelliste angelegt. Der Halbe läuft rückwärts vor ihm her und macht Geräusche wie ein Trommelwirbel.",
+      ["Lurch 1", "„Festlich: nicht erfüllt. Wir haben weder Baum noch Lichter. Bewohnt: erfüllt. Konfliktfrei: offen.“"],
+      ["Der Halbe", "„Wie viele Mängel hast du?“"],
+      ["Lurch 1", "„Bisher sechs.“"],
+      ["Der Halbe", "„Nur sechs? Ich hätte auf zwanzig getippt!“"],
+      ["Lurch 1", "„Das ist erst die Küche.“"],
+      "Der Halbe muss sich an der Wand festhalten, so sehr lacht er.",
+      "In der Küche tropft der Wasserhahn, und die Tür klemmt. An der Wand ist ein dunkler Fleck, der von Weitem wie ein Smiley aussieht. Es ist ein Schimmel. Lurch 1 hat ihn selbst gezüchtet, aus aufgehobenen Resten, „für den Notfall“. Er gießt ihn alle zwei Tage. Welcher Notfall das sein soll, weiß er nicht.",
+      ["Der Halbe", "„Du hast ein Haustier!“"],
+      ["Lurch 1", "„Es ist Vorsorge.“"],
+      ["Der Halbe", "„Du hast Vorsorge, die du gießt!“"],
+      "Im Bad bleibt Lurch 1 stehen. In der Ecke neben der Dusche wächst ein zweiter Schimmel. Er ist größer und dunkler als der in der Küche. Lurch 1 schreibt: „Befall im Bad. Dringend entfernen.“",
+      "Im Wohnzimmer sitzt Lurch 2 im Schal und liest. Er sieht nicht auf.",
+      ["Lurch 2", "„Wenn du im Bad etwas entfernst, sprichst du vorher mit mir.“"],
+      ["Lurch 1", "„Warum?“"],
+      ["Lurch 2", "„Rein hypothetisch.“"],
+      ["Lurch 1", "„Ach so.“ Im gleichen Moment hat er schon die nächste Zeile geschrieben."],
+      ["Der Halbe", "„Er hat ‚Ach so‘ gesagt und nicht nachgefragt. Spannend!“"],
+      "Zuletzt prüft Lurch 1 den Flur. Hinter der Garderobe liegt etwas. Der Halbe zieht es hervor. Es ist eine schwarze Socke, weiß gestrickt. Auf der Socke sind grüne Würmer mit roten Mützen.",
+      ["Der Halbe", "„Das sind wir! Wir sind Würmer!“"],
+      ["Lurch 1", "„Wir sind keine Würmer.“"],
+      ["Der Halbe", "„Auf dem Socken schon!“"],
+      ["Lurch 2", "„Wir tragen keine Socken. Rein hypothetisch gehört er jemand anderem.“"],
+      "Lurch 1 schreibt: „Mangel Nr. 9: Fremder Socken im Flur.“",
+    ],
+    fact: "Schimmelpilze wachsen dort, wo es feucht ist und etwas Organisches zu fressen gibt. Lurche nehmen einen Teil ihres Sauerstoffs über die feuchte Haut auf, deshalb darf sie nicht austrocknen. Eidechsen sind Reptilien und mit Lurchen nicht näher verwandt.",
+    factAfter: true,
+    interaction: { kind: "quiz", title: "Quiz",
+      questions: [
+        { q: "Frage 1: Was braucht Schimmel vor allem zum Wachsen?", options: ["Feuchtigkeit", "Sonnenlicht", "Salz"], correct: 0 },
+        { q: "Frage 2: Warum müssen Lurche ihre Haut feucht halten?", options: ["Damit sie schöner glänzen", "Weil sie zum Teil über die Haut atmen", "Damit sie schneller schwimmen"], correct: 1 },
+        { q: "Frage 3: Was gehört nicht zu den Lurchen?", options: ["Molch", "Salamander", "Eidechse"], correct: 2 },
+      ],
+      solution: ["Lösung: 1 a, 2 b, 3 c."],
+    },
+  },
+
+  /* ---------- 3 ---------- */
+  { emoji: "💭", title: "Theorien", act: ACT1, focus: "Lurch 2",
+    story: [
+      "Am Abend hat Lurch 2 die Wand gegenüber dem Sofa mit Zetteln beklebt. Er trägt den Schal, obwohl es in der Wohnung warm ist.",
+      ["Lurch 2", "„Ich habe fünf Theorien, warum Herr Reiher uns diesen Brief geschrieben hat.“"],
+      ["Lurch 1", "„Bitte kurz.“"],
+      ["Der Halbe", "„Mit Popcorn!“"],
+      ["Lurch 1", "„Wir haben kein Popcorn.“"],
+      ["Der Halbe", "„Dann mit Algenchips!“"],
+      "Lurch 2 räuspert sich und liest vor. Jede Theorie hat eine Begründung.",
+      ["Theorie 1", "Der Brief kündigt an, dass wir ausziehen müssen. Dafür spricht das Wort „Konsequenzen“."],
+      ["Theorie 2", "Der Brief war gar nicht für uns bestimmt. Dafür spricht, dass der Wasserläufer unzuverlässig ist und ihn im Vorbeilaufen geworfen hat."],
+      ["Theorie 3", "Herr Reiher will uns fressen. Dafür spricht, dass er ein Reiher ist."],
+      ["Theorie 4", "Herr Reiher will uns etwas mitteilen, das er nicht direkt schreiben kann. Dafür spricht, dass der Brief so steif klingt."],
+      ["Theorie 5", "Frau Kröte hat den Brief diktiert, um uns zu ärgern. Dafür spricht, dass sie alles tut, um uns zu ärgern."],
+      ["Der Halbe", "„Theorie 3 ist die ehrlichste!“"],
+      ["Lurch 1", "„Theorie 3 ist die schlimmste.“"],
+      ["Der Halbe", "„Das ist kein Gegensatz!“"],
+      "Lurch 1 notiert alle fünf. Er ist blass geworden, soweit ein grüner Lurch blass werden kann.",
+      ["Lurch 1", "„Welche stimmt?“"],
+      ["Lurch 2", "„Rein hypothetisch stimmt eine davon. Wenn ich wüsste, welche, hätte ich nur eine Theorie.“"],
+    ],
+    interaction: { kind: "choice", title: "Welche Theorie stimmt?",
+      prompt: ["Welche der fünf Theorien hältst du für richtig?"],
+      options: [
+        { label: "Theorie 1: Wir müssen ausziehen" },
+        { label: "Theorie 2: Der Brief war nicht für uns bestimmt" },
+        { label: "Theorie 3: Herr Reiher will uns fressen" },
+        { label: "Theorie 4: Eine Botschaft, die er nicht direkt schreiben kann" },
+        { label: "Theorie 5: Frau Kröte hat ihn diktiert" },
+      ],
+      response: "Merk sie dir. Die Auflösung kommt an Türchen 20.",
+    },
+  },
+
+  /* ---------- 4 ---------- */
+  { emoji: "❄️", title: "Die Schneeflocke", act: ACT1, focus: "der Halbe",
+    image: "bilder/tuer-04-schneelurch.webp", imageAlt: "Die drei Lurche bauen nachts im Schnee einen Schneemann",
+    story: [
+      "Mitten in der Nacht wacht der Halbe auf. Das Fenster ist beschlagen, und draußen fällt zum ersten Mal Schnee. Er springt aus dem Bett und rennt in Lurch 2s Zimmer.",
+      ["Der Halbe", "„Es schneit! Wach auf!“"],
+      ["Lurch 2", "„Es ist drei Uhr.“"],
+      ["Der Halbe", "„Das ist die beste Zeit für Schnee!“"],
+      "Lurch 2 setzt sich auf. Er zieht den Schal um den Hals.",
+      ["Der Halbe", "„Was passiert eigentlich mit uns, wenn es friert?“"],
+      ["Lurch 2", "„Das ist eine sehr gute Frage. Ich habe dazu eine Theorie, einen Vortrag und eine Fußnote.“"],
+      ["Der Halbe", "„Die Kurzfassung bitte.“"],
+      ["Lurch 2", "„Wir sind wechselwarm. Unsere Körpertemperatur hängt von der Umgebung ab. Wird es kalt, werden wir langsamer, bis wir uns kaum noch bewegen. Das nennt man Winterstarre.“"],
+      ["Der Halbe", "„Also schlafen wir nicht?“"],
+      ["Lurch 2", "„Nein. Wir sind nur sehr langsam.“"],
+      ["Der Halbe", "„Dann bin ich ja jeden Morgen im Winter!“"],
+      "Beide lachen. Aus dem Flur kommt Lurch 1 im Schlafanzug, den Notizblock in der Hand.",
+      ["Lurch 1", "„Ich habe einen Plan, wenn es schneit.“"],
+      ["Der Halbe", "„Und der wäre?“"],
+      ["Lurch 1", "„Schneelurchi bauen.“"],
+      "Sie gingen zu dritt raus, um einen Schneelurch zu bauen und den ersten Tag im Schnee gemeinsam zu verbringen.",
+    ],
+    fact: "Lurche sind wechselwarm. Im Winter fallen sie in die Winterstarre, in der Herzschlag und Stoffwechsel stark herabgesetzt sind. Wo sie überwintern, hängt von der Art ab. Manche Frösche liegen am Gewässergrund, Kröten und viele Molche an Land in frostfreien Verstecken.",
+    factAfter: true,
+    interaction: { kind: "match", title: "Wer überwintert wie?",
+      prompt: ["Ordne jedem Tier den passenden Überwinterungsort zu."],
+      places: [
+        "Häufig am Grund eines Gewässers, im Schlamm",
+        "An Land in frostfreien Verstecken wie Erdlöchern oder unter Laub",
+        "In Höhlen oder tiefen Felsspalten",
+        "An Land unter Steinen oder Totholz, manchmal auch im Wasser",
+      ],
+      items: [
+        { name: "Erdkröte", answer: 1 },
+        { name: "Grasfrosch", answer: 0 },
+        { name: "Teichmolch", answer: 3 },
+        { name: "Feuersalamander", answer: 2 },
+      ],
+      solution: ["Lösung: Erdkröte 2, Grasfrosch 1, Feuersalamander 3, Teichmolch 4."],
+    },
+  },
+
+  /* ---------- 5 ---------- */
+  { emoji: "📝", title: "Der Plan", act: ACT1, focus: "Lurch 1",
+    story: [
+      "Lurch 1 hat die Wohnung über Nacht in ein Projekt verwandelt. Auf dem Tisch liegt ein Plakat mit dem Titel „Weihnachtsinspektion: Aufgabenverteilung“.",
+      ["Lurch 1", "„Es gibt drei Aufgaben: Dekoration, Essen, Putzen. Jeder von uns übernimmt eine.“"],
+      ["Lurch 2", "„Und du kontrollierst trotzdem alle drei.“"],
+      ["Lurch 1", "„Ich kontrolliere nicht. Ich begleite.“"],
+      ["Der Halbe", "„Du stehst die ganze Zeit hinter uns.“"],
+      ["Lurch 1", "„Das ist Begleitung.“"],
+      ["Der Halbe", "„Das ist Begleitung mit Atem im Nacken!“"],
+      "Der Halbe hat den Socken aus dem Flur mitgebracht. Er hält ihn sich an die Nase.",
+      ["Der Halbe", "„Der Socken riecht nach Fischbrötchen.“"],
+      ["Lurch 2", "„Wir essen keinen Fisch. Rein hypothetisch gehört er jemandem, der Fisch isst.“"],
+      ["Lurch 1", "„Das sind fast alle im Teich.“"],
+      "Die Verteilung dauert zwanzig Minuten. Lurch 1 hat für jede Variante eine Begründung, und Lurch 2 hat für jede Begründung eine Gegenbegründung. Am Ende steht der Plan fest. Er ist tadellos.",
+      "Am Abend ist die Küche voller Rauch, die Deko hängt verkehrt, und aus dem Bad kommt ein Geruch, den niemand einordnen kann. Der Plan war gut. Er ist nur an der Wirklichkeit gescheitert.",
+    ],
+    interaction: { kind: "choice", title: "Wer macht was?",
+      prompt: ["Verteile die drei Aufgaben auf die drei Lurche. Es gibt sechs mögliche Verteilungen. Danach siehst du die drei Pannenmeldungen, die zu deiner Wahl passen."],
+      options: (() => {
+        const PANNEN = {
+          deko: {
+            "Lurch 1": "Er hat die Girlande so lange gerade gerückt, bis sie von der Wand gefallen ist.",
+            "Lurch 2": "Er hat zwei Stunden begründet, warum Dekoration sinnvoll ist, und danach nichts aufgehängt.",
+            "der Halbe": "Er hat alles dekoriert, aber nur bis zu einer Höhe von 15 Zentimetern.",
+          },
+          essen: {
+            "Lurch 1": "Er hat sechs Notfallgerichte vorbereitet und vergessen, ein normales Essen zu kochen.",
+            "Lurch 2": "Er hat ein neues Rezept erfunden. Es hat noch keinen Namen und leider auch keinen Geschmack.",
+            "der Halbe": "Er hat das Essen vorbereitet und dabei schon vor dem Essen gegessen.",
+          },
+          putzen: {
+            "Lurch 1": "Er hat so gründlich geputzt, dass der Boden jetzt rutschiger ist als der Teich.",
+            "Lurch 2": "Er hat beim Putzen ein Mulmkorn entdeckt, es „Kurt der Krümel“ genannt und auf Plausibilität sowie auf vierzehn verschiedene Allergien geprüft.",
+            "der Halbe": "Er hat den Eimer als Boot benutzt und nur den Weg bis zur Küche geputzt.",
+          },
+        };
+        const W = ["Lurch 1", "Lurch 2", "der Halbe"];
+        const perms = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+        const cap = s => s[0].toUpperCase() + s.slice(1);
+        return perms.map(([d, e, p]) => ({
+          label: `Deko: ${W[d]} · Essen: ${W[e]} · Putzen: ${W[p]}`,
+          response: [
+            `Dekoration (${cap(W[d])}): ${PANNEN.deko[W[d]]}`,
+            `Essen (${cap(W[e])}): ${PANNEN.essen[W[e]]}`,
+            `Putzen (${cap(W[p])}): ${PANNEN.putzen[W[p]]}`,
+          ],
+        }));
+      })(),
+      response: "Die Pannenmeldungen des Abends:",
+      after: "Probier ruhig noch eine andere Verteilung. Es geht jedes Mal etwas schief, aber jedes Mal etwas anderes.",
+    },
+  },
+
+  /* ---------- 6 ---------- */
+  { emoji: "📜", title: "Frau Krötes Zettel", act: ACT1, focus: "alle drei",
+    story: [
+      "An der Wohnungstür hängt ein Zettel von Frau Kröte, ihrer Nachbarin aus Raum 435. Er ist drei Seiten lang.",
+      "Der Anfang lautet:",
+      { label: "Zettel an der Tür, Seite 1 von 3", note: ["An alle Bewohner des Hauses, insbesondere die der Wohnung 464, im Hinblick auf die Weihnachtszeit und die damit verbundenen Pflichten, die sich aus der Hausordnung ergeben, die ich im Folgenden noch einmal ausdrücklich in Erinnerung rufe, da es in der Vergangenheit, ich möchte nicht sagen immer, aber doch wiederholt, zu Missverständnissen gekommen ist …"] },
+      "Es folgen zwei weitere Seiten in demselben Stil.",
+      ["Lurch 1", "„Drei Seiten! Warum schreibt man drei Seiten, wenn man einen Satz meint?“"],
+      ["Lurch 2", "„Weil der eine Satz fehlt.“"],
+      ["Der Halbe", "„Ich habe die zweite Seite schon beim Lesen verloren. Ich weiß nicht mal, wo sie ist!“"],
+      ["Lurch 1", "„Und sie hängt es an unsere Tür, als wäre es ein Geschenk!“"],
+      ["Lurch 2", "„Rein hypothetisch ist es eine Aufgabe. Aber ich weiß nicht, welche.“"],
+      "Sie gehen zu Raum 435 und klopfen. Frau Kröte öffnet einen Spalt breit.",
+      ["Frau Kröte", "„Haben Sie den Zettel gelesen?“"],
+      ["Lurch 1", "„Ja, dreimal. Wir haben eine Frage.“"],
+      ["Frau Kröte", "„Das steht alles im Zettel.“"],
+      "Sie schließt die Tür. Lurch 1 klopft noch einmal.",
+      ["Frau Kröte", "(durch die Tür) „Zettel!“"],
+      "Die drei stehen im Flur. Lurch 1 atmet tief ein. Lurch 2 zieht den Schal hoch. Der Halbe sagt als Erster etwas.",
+      ["Der Halbe", "„Wir haben soeben eine Verabredung mit einer Tür gehabt.“"],
+    ],
+    interaction: { kind: "quiz", title: "Welcher Satz fasst den Zettel zusammen?",
+      questions: [
+        { options: [
+          "„Bitte schmücken Sie bis Freitag die Gemeinschaftsflächen.“",
+          "„Das Haus gehört mir, und alle anderen sind nur zu Besuch.“",
+          "„Bitte keine Kerzen, außer sie sind elektrisch, aber nur auf der Fensterbank.“",
+          "„Ich habe vergessen, was ich schreiben wollte.“",
+        ], correct: 0 },
+      ],
+      solution: [
+        "Lösung: a.",
+        "Was der Zettel nicht verrät: Bis welchem Freitag? Und welche Gemeinschaftsflächen? Frau Kröte erwähnt beides nirgends.",
+      ],
+    },
+  },
+
+  /* ---------- 7 ---------- */
+  { emoji: "💡", title: "Die Lichterkette", act: ACT2, focus: "Lurch 2",
+    story: [
+      "Im Wohnzimmer liegt seit Wochen eine kaputte Lichterkette. Lurch 2 wollte sie „gleich“ reparieren. Heute ist der Tag des „gleich“.",
+      ["Lurch 2", "„Ich habe sie gründlich untersucht. Zwei Kontakte sind oxidiert, ein Kabel ist gequetscht, und der Stecker steckte in der falschen Dose.“"],
+      ["Lurch 1", "„Das klingt nach einer Lösung.“"],
+      ["Lurch 2", "„Es ist erst der Anfang. Man muss das ganze System verstehen.“"],
+      "Er zerlegt die Lichterkette in 31 Einzelteile und arbeitet vier Stunden. Dann steckt er sie ein, und im ganzen Haus geht das Licht aus.",
+      "Es ist völlig still. Aus Raum 435 hört man einen Schrei, dann Frau Krötes Stimme im Flur: „DAS STEHT IN DER HAUSORDNUNG!“",
+      ["Lurch 1", "„Sicherung?“"],
+      ["Lurch 2", "„Ich kümmere mich darum.“"],
+      "Er sagt es zu leise. Im Dunkeln sieht man nur noch den roten Schal, den er bis über die Nase gezogen hat. Er redet schneller als sonst und verliert Wörter.",
+      ["Lurch 2", "„Es lag nicht … ich meine, rein hypothetisch war die Sicherung … ich hatte alles geprüft …“"],
+      ["Der Halbe", "„Immerhin ist jetzt das ganze Treppenhaus dunkel. Das nenne ich Teamwork!“"],
+      "Lurch 2 lacht kurz auf.",
+      ["Der Halbe", "„Und niemand sieht, wie rot du wirst.“"],
+      ["Lurch 2", "„Ich bin grün.“"],
+      ["Der Halbe", "„Eben! Das hat noch keiner gesehen!“"],
+      ["Lurch 2", "„Ich glaube, ich bekomme Fieber.“"],
+      ["Lurch 1", "„Du hast kein Fieber. Du hast Stress. Ich mache Tee.“"],
+      "Lurch 1 tastet sich in die Küche und stößt gegen die Tür. Sie klemmt.",
+      ["Der Halbe", "„Mangel Nummer zehn!“"],
+    ],
+    fact: "Der Feuersalamander verdankt seinen Namen einem alten Mythos. Früher legte man Holz in den Kamin, in dem Salamander überwinterten. Sie flüchteten vor den Flammen, und so glaubten die Menschen, sie überlebten im Feuer. Das stimmt nicht. Seine gelb-schwarze Zeichnung warnt Feinde: Bei Gefahr sondert er ein giftiges Sekret aus seiner Haut ab.",
+    factAfter: true,
+    interaction: { kind: "quiz", title: "Quiz",
+      questions: [
+        { q: "Frage 1: Warum glaubte man früher, der Feuersalamander überlebe im Feuer?", options: ["Er hat Schuppen aus Stein", "Er floh aus brennendem Holz im Kamin", "Er kann Feuer trinken"], correct: 1 },
+        { q: "Frage 2: Wofür ist die gelb-schwarze Zeichnung des Feuersalamanders gut?", options: ["Als Tarnung im Laub", "Als Warnung vor seinem Gift", "Um Insekten anzulocken"], correct: 1 },
+      ],
+      solution: ["Lösung: 1 b, 2 b."],
+    },
+  },
+
+  /* ---------- 8 ---------- */
+  { emoji: "🌾", title: "Der Tannenwedel", act: ACT2, focus: "Lurch 1 und der Halbe",
+    story: [
+      "In Raum 464 fehlt ein Weihnachtsbaum. Fichten wachsen nicht unter Wasser, aber es gibt den Tannenwedel, eine Wasserpflanze mit nadelartigen Blättern. Er ist grün, er ist festlich, und er ist überall ausverkauft.",
+      "Lurch 1 hat ihn beim Lieferdienst Biber & Söhne bestellt. Es klopft einmal. Der Wasserläufer ist schon wieder weg, bevor jemand öffnet. Vor der Tür steht ein Rückenschwimmer, keuchend, mit einem Paket.",
+      ["Der Rückenschwimmer", "„Der Wasserläufer hat gesagt, das sei gutes Training. Er hat mich dafür nicht bezahlt.“"],
+      "Das Paket enthält zwanzig Halme Schilf mit einem Etikett: „Weihnachtsschilf: Der neue Baum.“",
+      ["Lurch 1", "„Das ist kein Tannenwedel.“"],
+      ["Der Halbe", "„Das ist ein Besen mit Ambitionen!“"],
+      "Lurch 1 ruft die Nummer auf dem Etikett an. Am anderen Ende meldet sich eine tiefe Stimme.",
+      ["Herr Biber", "„Biber hier.“"],
+      ["Lurch 1", "„Guten Tag. Ich habe ein Paket erhalten, das nicht dem entspricht, was ich bestellt habe. Statt Tannenwedel ist es Schilf.“"],
+      ["Herr Biber", "„Ah, mein Wasserläufer! Der Junge hat Ideen. Ich sage immer: Probleme gibt es nur, wenn man sie so nennt. Mein Wasserläufer nennt sie Gelegenheiten. Und die Zahlen stimmen.“"],
+      ["Lurch 1", "„Es ist trotzdem Schilf.“"],
+      ["Herr Biber", "„Ein innovatives Schilf.“"],
+      "Er legt auf.",
+      "Lurch 1 legt den Hörer auf die Gabel. Er sagt eine Weile nichts. Dann sagt er sehr ruhig: „Ein Einschreiben, das auf der Fußmatte landet. Ein Tannenwedel, der ein Besen ist. Das ist jetzt das zweite Mal.“",
+      ["Lurch 2", "„Rein hypothetisch ist er ein Meister der Selbstvermarktung.“"],
+      ["Der Halbe", "„Ich finde, wir sollten ihm fünf Sterne geben. Bei null Sternen geht das leider nicht.“"],
+      ["Lurch 1", "„Ich schreibe eine Beschwerde.“"],
+      ["Lurch 2", "„An wen? Herr Biber findet ihn großartig.“"],
+      ["Lurch 1", "„Dann schreibe ich sie an Herrn Biber, aber sehr höflich.“"],
+      ["Der Halbe", "„Wie höflich?“"],
+      ["Lurch 1", "„Dreimal höflich.“"],
+      ["Der Halbe", "„Er braucht vier Sekunden für ein Paket, und wir brauchen drei Tage für eine Beschwerde. Das ist ein Wettlauf, den wir nicht gewinnen!“"],
+    ],
+    interaction: { kind: "reveal", title: "Anagramm-Rätsel mit Wasserpflanzen",
+      prompt: ["Löse die drei Buchstabensalate. Es sind Pflanzen, die am oder im Teich wachsen.", ["1. HCILFS", "2. SOSEERE", "3. BORKNELHOR"]],
+      solution: ["Lösung: 1 Schilf, 2 Seerose, 3 Rohrkolben."],
+    },
+  },
+
+  /* ---------- 9 ---------- */
+  { emoji: "🕳️", title: "Herr Olm", act: ACT2, focus: "Lurch 2",
+    story: [
+      "Lurch 2 geht in den Keller. Herr Olm wohnt dort seit Jahrzehnten. Er kennt jeden Mieter und jede Hausregel, und er besitzt eine ganze Wand voller alter Fachbücher. Lurch 2 hofft auf eine Antwort: Wie schreibt ein Reiher, wenn er etwas Gutes meint, und wie, wenn er etwas Schlechtes meint?",
+      ["Lurch 2", "„Guten Tag, Herr Olm. Ich habe eine Frage zu Herrn Reiher.“"],
+      ["Herr Olm", "„Was meinen Sie mit ‚Frage‘?“"],
+      ["Lurch 2", "„Etwas, das man wissen möchte.“"],
+      ["Herr Olm", "„Und was ist ‚wissen‘? Kann man etwas wissen, nur weil man es möchte?“"],
+      ["Lurch 2", "„Es geht um einen Brief von Herrn Reiher.“"],
+      ["Herr Olm", "„Warum sagen Sie ‚Herr‘? Wer hat festgelegt, dass ein Reiher ein Herr ist?“"],
+      ["Lurch 2", "„Er ist unser Vermieter.“"],
+      ["Herr Olm", "„Vermieter. Gehört der Teich ihm? Wem gehört überhaupt Wasser?“"],
+      "Lurch 2 versucht es noch zweimal. Herr Olm geht auf nichts ein, was er sagt. Er antwortet nur auf Wörter, die er selbst gefunden hat. Es ist, als würde Lurch 2 gegen eine Wand sprechen, die zurückfragt.",
+      ["Lurch 2", "„Herr Olm, wie schreibt ein Reiher, wenn er jemanden einladen möchte?“"],
+      ["Herr Olm", "„Einladen? Das steht in meinem Buch.“"],
+      "Er zieht ein dickes Buch aus dem Regal: „Handbuch des guten Hausfriedens, Auflage 1957“.",
+      ["Herr Olm", "„Seite 212. Ein Reiher ist ein Einzelgänger und äußert sich ausschließlich in Hausordnungen.“"],
+      ["Lurch 2", "„Gibt es neuere Bücher?“"],
+      ["Herr Olm", "„Neuere Bücher sind unseriös. Früher war alles besser, auch die Bücher.“"],
+      ["Lurch 2", "„Was steht dort über Einladungen?“"],
+      "Herr Olm blättert. Er sucht im Register. Er sucht noch einmal. Er dreht das Buch um.",
+      ["Herr Olm", "„Das steht nicht drin. Also gibt es das nicht.“"],
+      ["Lurch 2", "„Aber …“"],
+      ["Herr Olm", "„Ich muss mich jetzt verkriechen.“"],
+      "Er verschwindet in seiner Höhle hinter einem Vorhang aus Algen.",
+      "Lurch 2 geht allein zurück durch den Kellergang. Draußen vor dem Eingang liegen Abdrücke im Schlamm: tief, mit drei Zehen nach vorn und einer nach hinten. Lurch 2 zeichnet sie ab, denn er ist Forscher.",
+    ],
+    fact: "Der Grottenolm lebt in unterirdischen Gewässern der Karsthöhlen Südosteuropas. Seine Augen sind zurückgebildet. Er spart Energie, wo er kann, und soll mehrere Jahre ohne Nahrung überleben können. Man vermutet, dass er sehr alt werden kann, möglicherweise rund 100 Jahre.",
+    factAfter: true,
+    interaction: { kind: "quiz", title: "Quiz und eine Vermutung",
+      questions: [
+        { q: "Frage 1: Wo lebt der Grottenolm?", options: ["In Höhlengewässern Südosteuropas", "In Teichen in Mitteleuropa", "In Flüssen Nordamerikas"], correct: 0 },
+        { q: "Frage 2: Wie lange kann ein Olm ohne Nahrung auskommen?", options: ["Etwa einen Tag", "Etwa einen Monat", "Bis zu etwa zehn Jahre"], correct: 2 },
+        { q: "Vermutung: Welches Tier hat die Abdrücke im Schlamm hinterlassen? Merk dir deine Antwort. Die Auflösung kommt an Türchen 22.", options: ["Ein Huhn", "Eine Amsel", "Ein Graureiher", "Eine Taube"], guess: true },
+      ],
+      solution: ["Lösung Quiz: 1 a, 2 c.", "Deine Vermutung zu den Abdrücken wird an Türchen 22 aufgelöst."],
+    },
+  },
+
+  /* ---------- 10 ---------- */
+  { emoji: "🎁", title: "Wichteln zu dritt", act: ACT2, focus: "alle drei",
+    story: [
+      "Beim Frühstück hat Lurch 1 eine Idee.",
+      ["Lurch 1", "„Wir sollten wichteln.“"],
+      ["Lurch 2", "„Wir sind drei.“"],
+      ["Lurch 1", "„Das ist kein Argument.“"],
+      ["Lurch 2", "„Doch. Bei drei Personen gibt es nur zwei mögliche Ergebnisse. Wenn ich erfahre, wen ich gezogen habe, kann ich ausrechnen, wer wen hat.“"],
+      ["Lurch 1", "„Es geht um die Überraschung.“"],
+      ["Der Halbe", "„Ich lasse mich gern überraschen! Ich überrasche mich jeden Morgen selbst. Heute zum Beispiel, als ich gemerkt habe, dass ich Socken suche, die ich nicht besitze!“"],
+      "Er lacht so laut über seinen eigenen Witz, dass er vom Stuhl rutscht.",
+      "Lurch 1 holt drei zusammengefaltete Zettel aus einer Dose. Er hat sie schon vorbereitet. Jeder zieht einen. Niemand sagt, wen er gezogen hat.",
+      ["Lurch 2", "„Ich habe den Halben gezogen.“"],
+      ["Lurch 1", "„Das darf man nicht sagen!“"],
+      ["Lurch 2", "„Es ist mir herausgerutscht. Ich werde nervös, wenn ich ein Geheimnis habe.“"],
+      ["Der Halbe", "„Dann sag nichts mehr! Sonst erfahre ich noch, was ich bekomme, und muss so tun, als wüsste ich es nicht!“"],
+    ],
+    interaction: { kind: "quiz", title: "Logikrätsel „Wer hat wen gezogen?“", upper: true,
+      prompt: ["Jeder hat genau einen anderen gezogen. Niemand hat sich selbst gezogen. Niemand wurde zweimal gezogen. Du weißt: Lurch 2 hat den Halben gezogen. Welche Verteilung stimmt?"],
+      questions: [
+        { options: [
+          "Lurch 1 hat Lurch 2 gezogen, der Halbe hat Lurch 1 gezogen.",
+          "Lurch 1 hat den Halben gezogen, der Halbe hat Lurch 2 gezogen.",
+          "Lurch 1 hat sich selbst gezogen, der Halbe hat Lurch 2 gezogen.",
+          "Lurch 1 hat Lurch 2 gezogen, der Halbe hat Lurch 2 gezogen.",
+        ], correct: 0 },
+      ],
+      solution: ["Lösung: A. Der Halbe wird bereits von Lurch 2 beschenkt, also kann ihn Lurch 1 nicht auch gezogen haben. Damit bleibt für Lurch 1 nur Lurch 2, und für den Halben bleibt nur Lurch 1."],
+    },
+  },
+
+  /* ---------- 11 ---------- */
+  { emoji: "🍪", title: "Plätzchen", act: ACT2, focus: "Lurch 1",
+    story: [
+      "Um 22 Uhr steht Lurch 1 in der Küche. Er hat Mehl in den Falten, Zucker auf der Mütze und eine Schürze, die er selbst genäht hat. Er backt, wenn er nicht schlafen kann. Das ist keine Entscheidung, sondern eine Methode.",
+      "Der Halbe kommt im Schlafanzug herein.",
+      ["Der Halbe", "„Du backst wieder.“"],
+      ["Lurch 1", "„Ich bereite mich vor.“"],
+      ["Der Halbe", "„Worauf?“"],
+      ["Lurch 1", "„Auf alles.“"],
+      "Der Halbe setzt sich an den Tisch und isst, während Lurch 1 knetet, etwa ein Drittel des Teigs. Lurch 1 merkt es nicht.",
+      "Da kommt Lurch 2 vom Flur herein, im Schlafanzug und mit Schal. Er will sich etwas zu trinken holen, bleibt aber stehen und sieht zur Wand. Dort in der Ecke neben dem Herd wächst ein kleiner, runder Fleck.",
+      ["Lurch 2", "„Was ist das?“"],
+      ["Lurch 1", "„Ein Schimmel. Ein Befall. Ich kümmere mich darum.“"],
+      ["Lurch 2", "„Ein Befall in der Küche. Und ich habe einen im Bad. Rein hypothetisch haben wir ein Hygieneproblem.“"],
+      ["Lurch 1", "„Wir haben zwei Stellen.“"],
+      "Sie sehen sich an. Beide lächeln. Der Halbe sieht dem Gespräch zu wie einem Tennisspiel und hört mit dem Essen nicht auf.",
+      "Lurch 1 sieht auf das Rezept. Es reicht für 12 Plätzchen. Ein Drittel des Teigs fehlt bereits.",
+    ],
+    interaction: { kind: "quiz", title: "Rechenrätsel",
+      prompt: [
+        "Das Rezept ergibt 12 Plätzchen und braucht 200 g Mehl, 100 g Butter, 80 g Zucker und 1 Ei. Lurch 1 will 18 Plätzchen backen.",
+      ],
+      questions: [
+        { q: "Frage 1: Wie viel Mehl braucht er?", options: ["250 g", "300 g", "360 g", "400 g"], correct: 1 },
+        { q: "Frage 2: Wie viel Butter braucht er?", options: ["120 g", "150 g", "180 g", "200 g"], correct: 1 },
+      ],
+      solution: ["Lösung: 1 b, 2 b. Er braucht das Eineinhalbfache jeder Zutat, also auch 120 g Zucker und 1,5 Eier."],
+    },
+  },
+
+  /* ---------- 12 ---------- */
+  { emoji: "🪶", title: "Vorbesichtigung", act: ACT2, focus: "alle drei",
+    story: [
+      "Am 12. Dezember läuft die Vorbereitung. Lurch 1 hängt einen Plan an die Wand. Lurch 2 liest die Anleitung der Lichterkette zum dritten Mal. Der Halbe hat sich aus Schilf eine Krone gebaut und trägt sie. Dann klingelt es.",
+      "Vor der Tür steht Herr Reiher, auf einem Bein. In der einen Hand hält er ein kleines Notizbuch.",
+      ["Herr Reiher", "„Guten Tag. Ich wollte nur kurz nachsehen, wie weit Sie sind.“"],
+      ["Lurch 1", "„Wir liegen im Plan.“ Sein Bommel zittert."],
+      "Herr Reiher geht durch das Wohnzimmer. Er sieht die Lichterkette in ihren 31 Einzelteilen und den Besenbaum in der Ecke.",
+      ["Herr Reiher", "„Die Lichterkette ist … ein Anfang. Und das ist ein Baum.“"],
+      ["Der Halbe", "„Er ist aus Schilf! Der Wasserläufer nennt ihn innovativ!“"],
+      ["Herr Reiher", "„Der Wasserläufer nennt vieles.“"],
+      "Er sieht die drei lange an, etwas zu lange. Lurch 1 verstummt.",
+      ["Herr Reiher", "„Wie nennt man noch diese Dinger, die man in die Wand … Dübel? Nein. Egal.“"],
+      ["Der Halbe", "„Dübel!“"],
+      ["Herr Reiher", "„Nein. Das war es nicht.“"],
+      "An der Tür dreht er sich noch einmal um.",
+      ["Herr Reiher", "„Es riecht nach Plätzchen. Das ist schön.“"],
+      "Dann ist er weg.",
+      ["Lurch 1", "„Er hat nachgesehen und nichts gesagt. Das ist verdächtig.“"],
+      ["Der Halbe", "„Er hat gesagt, es riecht schön. Das war nett!“"],
+      ["Lurch 1", "„Das ist eine Taktik.“"],
+      ["Der Halbe", "„Dann ist es eine sehr nette Taktik!“"],
+      ["Lurch 2", "„Rein hypothetisch war es beides.“"],
+    ],
+    fact: "Graureiher jagen am Wasser. Sie fressen vor allem Fische, aber auch Frösche, Molche, kleine Säugetiere und Insekten. Dass Lurche vor einem Graureiher auf der Hut sind, ist also begründet. Erdkröten schützen sich mit einem Hautgift aus Drüsen hinter den Augen.",
+    factAfter: true,
+    interaction: { kind: "quiz", title: "Quiz",
+      questions: [
+        { q: "Frage 1: Was steht nicht auf dem Speiseplan eines Graureihers?", options: ["Fisch", "Frösche", "Seerosenblätter", "Mäuse"], correct: 2 },
+        { q: "Frage 2: Wie schützt sich eine Erdkröte vor Feinden?", options: ["Mit einem Hautgift", "Mit Stacheln", "Mit Hörnern"], correct: 0 },
+      ],
+      solution: ["Lösung: 1 c, 2 a."],
+    },
+  },
+
+  /* ---------- 13 ---------- */
+  { emoji: "📁", title: "Die Akte", act: ACT3, focus: "Lurch 2",
+    story: [
+      "Lurch 2 sucht in einer Schublade der Kommode nach einer Ersatzsicherung für die Lichterkette. Stattdessen findet er einen Aktenordner mit der Aufschrift „Raum 464: Vormieter“. Das erste Blatt zeigt ein Foto einer Froschfamilie mit drei Kindern. Alle lächeln.",
+      ["Lurch 2", "„Familie Frosch. Vor uns haben hier Herr und Frau Frosch mit drei Kindern gewohnt. Sie sind im Frühjahr ausgezogen. Es gibt keinen Vermerk dazu. Nirgends.“"],
+      ["Lurch 1", "„Ohne Vermerk? Das gibt es nicht.“"],
+      ["Lurch 2", "„Rein hypothetisch gibt es dafür nur drei Erklärungen. Die erste lautet: Herr Reiher hat sie gefressen.“"],
+      ["Lurch 1", "„Bitte gehen wir nicht gleich vom Schlimmsten aus.“"],
+      ["Der Halbe", "„Ich finde die erste Erklärung ehrlich gesagt am spannendsten!“"],
+      ["Lurch 1", "„Halbe!“"],
+      ["Der Halbe", "„Ich sage nur, was alle denken!“"],
+      "Hinter dem Foto steckt ein kleiner Zettel in Herrn Reihers Handschrift. Er ist mit R. unterschrieben, und ein Satz darauf ist halb durchgestrichen. Lurch 2 will die Handschrift mit dem Brief vergleichen. Er geht zum Tisch, wo der Brief seit dem 1. Dezember liegt, und hält ihn neben den Zettel.",
+      "Er sieht abwechselnd auf den Brief und auf den Zettel. Dann murmelt er etwas in seinen Schal.",
+      ["Lurch 2", "„Groß … groß … und nicht im normalen Muster. Rein hypothetisch …“"],
+      ["Lurch 1", "„Was sagst du?“"],
+      ["Lurch 2", "„Nichts. Rein hypothetisch.“"],
+      ["Der Halbe", "„Er murmelt. Er murmelt immer, wenn er etwas gefunden hat.“"],
+      ["Lurch 2", "„Ich murmle nicht.“"],
+      ["Der Halbe", "„Du murmelst gerade.“"],
+    ],
+    interaction: { kind: "info", title: "Das Geheimnis", showLetter: true,
+      prompt: [
+        "Im Brief aus Türchen 1 steckt etwas, das man beim normalen Lesen nicht sieht. Lurch 2 hat es fast entdeckt. Schau dir die Zeilen noch einmal genau an.",
+        "Wenn du es siehst, behalte es für dich. Die Lurche brauchen noch bis Türchen 20, um darauf zu kommen.",
+      ],
+    },
+  },
+
+  /* ---------- 14 ---------- */
+  { emoji: "🏝️", title: "Die Vormieter", act: ACT3, focus: "alle drei",
+    story: [
+      "Sie gehen zu Raum 435 und klopfen. Diesmal öffnet Frau Kröte die Tür ganz. Sie hält ihren Zettel in der Hand.",
+      ["Frau Kröte", "„Haben Sie die Gemeinschaftsflächen geschmückt?“"],
+      ["Lurch 1", "„Welche denn?“"],
+      ["Frau Kröte", "„Das steht im Zettel.“"],
+      ["Lurch 2", "„Wir haben eine andere Frage. Es geht um Familie Frosch.“"],
+      ["Frau Kröte", "„Die waren immer zu laut. Und ihre Kinder haben den Flur verstopft.“"],
+      "Sie verschwindet kurz in der Wohnung und kommt mit einer Postkarte zurück. Auf der Vorderseite ist eine Lagune zu sehen. Auf der Rückseite steht in kleiner Schrift:",
+      { label: "Postkarte aus Italien", note: ["Liebe Frau Kröte, uns geht es gut. Das Wetter ist wunderbar, die Teiche sind warm. Herr Reiher und der Wasserläufer haben uns Italien empfohlen, und wir haben es nie bereut. Die Kinder sind erwachsen und haben jetzt eigene Probleme. Eine Nebenkostenabrechnung zum Beispiel. Herzliche Grüße, Familie Frosch."] },
+      "Die drei stehen im Flur. Niemand sagt etwas.",
+      ["Lurch 1", "„Sie leben.“"],
+      ["Lurch 2", "„Sie leben in Italien.“"],
+      ["Der Halbe", "„Und der Reiher hat es nur nicht aufgeschrieben!“"],
+      ["Lurch 2", "„Er hat es nicht aufgeschrieben, weil er es bestimmt vergessen hat. Er ist kein Bürokrat. Rein hypothetisch bin ich seit zehn Minuten sehr erleichtert und gleichzeitig gekränkt, dass ich eine Stunde lang an Mord gedacht habe.“"],
+      ["Der Halbe", "„Aus Kaulquappen werden Frösche, und aus Fröschen werden Erwachsene mit Nebenkostenabrechnung. Das ist die gefährlichste Verwandlung von allen!“"],
+      ["Frau Kröte", "„Das steht nicht im Zettel.“"],
+    ],
+    fact: "Frösche entwickeln sich in einer Metamorphose. Aus dem Ei schlüpft eine Kaulquappe mit Kiemen und Ruderschwanz. Zuerst wachsen die Hinterbeine, dann die Vorderbeine. Die Lungen bilden sich, und der Schwanz wird zurückgebildet. Am Ende steht ein Frosch, der an Land gehen kann.",
+    factAfter: true,
+    interaction: { kind: "reveal", title: "Quiz Kaulquappe zu Frosch",
+      prompt: [
+        "Bringe die Entwicklungsschritte in die richtige Reihenfolge:",
+        ["A: Die Vorderbeine wachsen.", "B: Die Kaulquappe schlüpft und atmet mit Kiemen.", "C: Der Schwanz wird zurückgebildet, der Frosch geht an Land.", "D: Die Hinterbeine wachsen."],
+      ],
+      solution: ["Lösung: B, D, A, C."],
+    },
+  },
+
+  /* ---------- 15 ---------- */
+  { emoji: "🔍", title: "Der Verdacht", act: ACT3, focus: "Lurch 2",
+    story: [
+      "Am Abend hängt Lurch 2 eine Pinnwand im Wohnzimmer auf. Darauf stehen drei Zettel, verbunden mit rotem Faden.",
+      ["Beweis 1", "der Brief mit den Konsequenzen."],
+      ["Beweis 2", "Herr Reiher stand unangekündigt vor der Tür."],
+      ["Beweis 3", "Er hat uns zu lange angesehen."],
+      ["Lurch 2", "„Das ergibt ein Muster.“"],
+      ["Lurch 1", "„Er hat gesagt, es riecht nach Plätzchen, und ist gegangen. Das macht keiner, der etwas Böses will.“"],
+      ["Lurch 2", "„Rein hypothetisch macht genau das jemand, der etwas Böses will und es nicht zeigen möchte.“"],
+      ["Der Halbe", "„Oder jemand, der Plätzchen mag.“"],
+      "Lurch 2 hängt einen vierten Zettel auf, ohne zu antworten. Der Halbe wird ernster.",
+      ["Der Halbe", "„Vielleicht ist er einfach einsam.“"],
+      ["Lurch 1", "„Einsam? Er besitzt ein ganzes Haus.“"],
+      ["Der Halbe", "„Das ist ja das Problem. Ein ganzes Haus, und keiner klopft.“"],
+      ["Lurch 2", "„Das ist kein Beweis.“"],
+      ["Der Halbe", "„Das ist ein Gefühl. Gefühle sind meistens schneller als Beweise.“"],
+      "Lurch 2 überlegt. Dann schreibt er einen fünften Zettel: „Beweis 5: Gefühl (Halber).“ Er hängt ihn etwas schief auf.",
+      "Im Flur öffnet Lurch 1 den Briefkasten. Er ist leer. Alle Weihnachtskarten, die gestern darin lagen, sind verschwunden. Vom Briefkasten führt eine Spur aus Schlamm quer durch den Flur bis zur Kellertür.",
+    ],
+    interaction: { kind: "quiz", title: "Wer hat den Briefkasten geleert?",
+      prompt: [
+        "Es gibt drei Verdächtige: Frau Kröte, Herr Olm und der Wasserläufer. Das sind die Hinweise:",
+        [
+          "1. Die Spur aus Schlamm führt vom Briefkasten bis zur Kellertür.",
+          "2. Der Wasserläufer läuft nur über die Wasseroberfläche und berührt nie den Boden.",
+          "3. Frau Kröte hat den ganzen Tag in Raum 435 gesessen und durch den Türspion geschaut. Das steht auf ihrem eigenen Zettel.",
+          "4. Herr Olm wohnt im Keller.",
+        ],
+      ],
+      questions: [
+        { q: "Wer war es?", options: ["Frau Kröte", "Herr Olm", "Der Wasserläufer"], correct: 1 },
+      ],
+      solution: [
+        "Lösung: b.",
+        "Lurch 1 klopft an die Kellertür. Herr Olm öffnet und sieht ihn an.",
+        { speaker: "Lurch 1", text: "„Haben Sie unsere Weihnachtskarten aus dem Briefkasten genommen?“" },
+        { speaker: "Herr Olm", text: "„Wer sagt, dass das Post war?“" },
+        { speaker: "Lurch 1", text: "„Es waren Weihnachtskarten.“" },
+        { speaker: "Herr Olm", text: "„Was ist eine Karte? Und was ist Weihnachten?“" },
+        "Er gibt sie schließlich zurück, nicht aus Einsicht, sondern weil er sie nicht lesen konnte. Die Schrift sei zu modern.",
+      ],
+    },
+  },
+
+  /* ---------- 16 ---------- */
+  { emoji: "🌙", title: "Die Nachtliste", act: ACT3, focus: "Lurch 1",
+    story: [
+      "Es ist drei Uhr nachts. Die Wohnung ist dunkel, aber in der Küche brennt Licht. Lurch 1 sitzt am Tisch, vor sich ein Stapel Papier. Er schreibt, streicht durch, schreibt neu.",
+      "Der Halbe kommt herein. Er sagt nichts. Er sieht nur zu.",
+      "Auf den Zetteln stehen Pläne, nicht für die Inspektion, sondern für alles, was passieren könnte. Plan Z für den Fall, dass Plan Y scheitert. Plan Ä, wenn Z nicht reicht. Ganz unten, in kleinerer Schrift, steht etwas, das kein Plan ist.",
+      ["Der Halbe", "„Was ist das?“"],
+      ["Lurch 1", "„Das ist nichts.“"],
+      ["Der Halbe", "„Da steht: ‚Was, wenn sie mich nicht mehr brauchen?‘“"],
+      "Lurch 1 dreht den Zettel um.",
+      ["Lurch 1", "„Das ist ein Gedankenspiel.“"],
+      ["Der Halbe", "„Für wen ist der Plan?“"],
+      ["Lurch 1", "„Für mich.“"],
+      ["Der Halbe", "„Dann ist es kein Plan für den Fall, dass ihr mich nicht mehr braucht.“"],
+      ["Lurch 1", "„Es ist ein Plan dafür, dass ich es merke.“"],
+      "Er zieht den Bommel von der Mütze nach unten. Es sieht aus, als wollte er sich verstecken. Der Halbe klettert auf den Stuhl neben ihm und lehnt sich an ihn. Das macht er selten.",
+      ["Der Halbe", "„Wir brauchen dich nicht, weil du nützlich bist. Wir brauchen dich, weil es mit dir nicht so schnell dunkel wird.“"],
+      "Lurch 1 sagt nichts. Er sieht auf den Zettel. Er faltet ihn zusammen, ganz klein, und steckt ihn in die Schürze. Dann schreibt er weiter, aber langsamer.",
+    ],
+    interaction: { kind: "reveal", title: "Reihenfolge-Rätsel",
+      prompt: [
+        "Lurch 1 hat seine Pläne durcheinandergebracht. Sortiere sie so, wie Lurch 1 sie ordnen würde. In seinem Alphabet kommt das Ä nach dem Z.",
+        "Pläne: Plan Ä, Plan C, Plan A, Plan Z, Plan M",
+      ],
+      solution: ["Lösung: Plan A, Plan C, Plan M, Plan Z, Plan Ä."],
+    },
+  },
+
+  /* ---------- 17 ---------- */
+  { emoji: "🧽", title: "Der Streit", act: ACT3, focus: "alle drei",
+    story: [
+      "Es beginnt mit einem Geruch. Lurch 2 kommt aus dem Schlafzimmer, zieht die Nase kraus und geht ins Bad. Er bleibt in der Tür stehen. Die Ecke neben der Dusche ist blitzblank. Es riecht nach Desinfektionsmittel.",
+      ["Lurch 2", "„Wo ist er?“"],
+      ["Lurch 1", "(aus der Küche) „Wer?“"],
+      ["Lurch 2", "„Mein Schimmel.“"],
+      ["Lurch 1", "„Das war ein Befall. Ich habe ihn entfernt. Es war dringend.“"],
+      ["Lurch 2", "„Das war ein Forschungsprojekt. Es lief seit drei Monaten.“"],
+      ["Lurch 1", "„Ich habe gefragt. Du hast gesagt: ‚Rein hypothetisch.‘“"],
+      ["Lurch 2", "„Das heißt nicht ‚Mach, was du willst‘!“"],
+      "Sie stehen sich im Flur gegenüber, beide lächelnd. Es ist das lauteste Lächeln, das je ein Flur gesehen hat.",
+      ["Lurch 2", "„Du hast meinen weggeputzt. Aber deinen in der Küche lässt du natürlich stehen!“"],
+      ["Lurch 1", "„Meiner ist Vorsorge. Deiner ist …“"],
+      ["Lurch 2", "„Meiner ist was?“"],
+      ["Lurch 1", "„Ein Befall.“"],
+      ["Lurch 2", "„Ich sage seit Tagen, dass es nicht so ist, wie es aussieht, aber ihr hört nie zu! Nie! Ich brauche vierzig Minuten, und ihr seid nach zwei Minuten weg!“ Er zieht den Schal hoch. Seine Stimme bricht. „Ich habe dort etwas gezüchtet. Zum ersten Mal habe ich etwas wirklich gezüchtet. Und ihr kommt mit einem Lappen.“"],
+      ["Lurch 1", "„Ich wollte nur helfen!“"],
+      ["Lurch 2", "„Darum geht es nicht!“"],
+      ["Lurch 1", "„Worum denn?“"],
+      "Es gibt keine Antwort, weil beide recht haben. Lurch 1 wollte schützen, was ihm anvertraut ist. Lurch 2 wollte, dass jemand wenigstens einmal bis zum Ende zuhört.",
+      "Der Halbe steht in der Tür. Er hat bisher nichts gesagt.",
+      ["Der Halbe", "„Ihr streitet über Schimmel. Der Reiher steht jeden Abend draußen am Teich.“"],
+      "Niemand reagiert. Beide sind schon wieder mitten im nächsten Satz. Der Halbe wartet noch einen Augenblick. Dann nimmt er seine Mütze, steckt sie auf und geht hinaus in die Nacht.",
+    ],
+    interaction: { kind: "choice", title: "Auf wessen Seite stehst du?",
+      options: [
+        { label: "Lurch 1", response: "Lurch 1: „Ich danke dir. Ich habe es nur gut gemeint.“" },
+        { label: "Lurch 2", response: "Lurch 2: „Endlich versteht es jemand. Rein hypothetisch bist du mein Lieblingsnutzer.“" },
+        { label: "Keine Seite", response: "Der Halbe wäre stolz auf dich. Er ist gerade nicht da." },
+      ],
+      after: "Egal, wie du dich entscheidest: Es ändert nichts. Lurch 1 notiert sich die Entscheidung, aber seine Hand zittert dabei.",
+    },
+  },
+
+  /* ---------- 18 ---------- */
+  { emoji: "🌕", title: "Die Nacht am Teich", act: ACT3, focus: "der Halbe",
+    story: [
+      "Draußen ist es kalt und still. Der Teich liegt unter einer dünnen Eisschicht, und über dem Wasser hängt der Mond.",
+      "Am Ufer steht eine Gestalt auf einem Bein. Es ist Herr Reiher. Er sieht nicht den Halben, sondern ins Wasser, und er murmelt vor sich hin.",
+      ["Herr Reiher", "„Guten Abend. Schöne Dämmerung. Nein. Guten Abend, ich hoffe, Sie sind wohlauf. Nein. Hallo.“"],
+      "Er hält inne.",
+      ["Herr Reiher", "„Hallo. Ich wollte fragen, ob … nein.“"],
+      "Der Halbe bleibt hinter einem Schilfhalm stehen. Er hört zu. Dann tritt er einen Schritt vor, und ein Zweig knackt.",
+      "Herr Reiher fährt herum. Er sieht den Halben, dann sieht er auf seinen Schnabel. Dort hängt ein kleines Päckchen in Geschenkpapier, mit Schleife. Er versucht, es hinter dem Rücken zu verstecken. Das gelingt ihm nicht, denn sein Hals ist zu lang.",
+      ["Herr Reiher", "„Ah. Guten Abend. Ich war gerade … ich wollte … Welcher Tag ist heute?“"],
+      ["Der Halbe", "„Der 17.“"],
+      ["Herr Reiher", "„Ach so. Dann habe ich mich nicht geirrt.“ Er klingt erleichtert und enttäuscht zugleich."],
+      ["Der Halbe", "„Sie üben Smalltalk.“"],
+      ["Herr Reiher", "„Das ist … nein. Ja. Es hilft, wenn man vorher … Es ist schon eine Weile her, dass ich …“"],
+      "Er sieht auf das Eis. Dann fällt ihm etwas aus dem Notizbuch, ein loses Blatt, das der Wind erfasst. Er greift danach, verliert den Halt, und eine einzelne graue Feder bleibt im Schilf hängen.",
+      ["Herr Reiher", "„Ich muss gehen. Es ist spät. Ich habe, es gibt noch … ein Termin.“"],
+      "Er geht, auf einem Bein, schneller als sonst. Das Päckchen nimmt er mit.",
+      "Der Halbe bleibt stehen. Er hebt die Feder auf. Dann das Blatt. Es ist zerrissen, die Schrift zittrig. Er liest es zweimal. Dann weiß er es. Er weiß, warum der Reiher jeden Abend am Teich steht, warum er die Tage verwechselt und warum der Brief so lang gedauert hat.",
+      "Zum ersten Mal an diesem Tag lächelt er, und zum ersten Mal passt es zu seinem Gesicht.",
+    ],
+    interaction: { kind: "match", title: "Die zerrissenen Sätze", letters: true,
+      prompt: ["Das Blatt aus Herrn Reihers Notizbuch ist in sechs Stücke gerissen. Setze die drei Sätze zusammen."],
+      places: ["den Tag verwechseln!", "schreiben!", "besorgen. Etwas Kleines."],
+      items: [
+        { name: "1. Geschenk für 464", answer: 2 },
+        { name: "2. Nicht wieder", answer: 0 },
+        { name: "3. Einladung", answer: 1 },
+      ],
+      solution: ["Lösung: 1 C, 2 A, 3 B. Der letzte Satz lautet also: „Einladung schreiben!“"],
+    },
+  },
+
+  /* ---------- 19 ---------- */
+  { emoji: "🤝", title: "Entschuldigungen", act: ACT4, focus: "Lurch 1 und Lurch 2",
+    story: [
+      "Am nächsten Morgen sitzen beide am Küchentisch und haben kein Wort gesprochen. Der Halbe ist nicht zurück. Auf dem Tisch liegt ein Zettel in seiner Schrift: „Bin bald da. Streitet nicht weiter.“",
+      "Lurch 1 hat die ganze Nacht an einem Plan gearbeitet. Er hat ihn auf drei Seiten aufgeschrieben. Er räuspert sich.",
+      ["Lurch 1", "„Ich möchte mich entschuldigen. Nur zur Sicherheit: Das ist Plan Entschuldigung, Version vier. Punkt eins: Ich habe deinen Schimmel entfernt. Punkt zwei: Das war falsch. Punkt drei: Ich hätte zuhören sollen. Punkt vier …“"],
+      ["Lurch 2", "„Das ist sehr gründlich.“"],
+      ["Lurch 1", "„Danke.“"],
+      ["Lurch 2", "„Ich muss auch etwas sagen. Rein hypothetisch …“ Er stockt. Er sieht auf den Tisch, dann auf seine Hände. Er versucht es noch einmal. „Rein hypothetisch bin ich … nein. Ich meine … Also … Es tut mir leid.“"],
+      "Es sind vierzig Minuten vergangen, aber diesmal hat niemand auf die Uhr gesehen.",
+      ["Lurch 1", "„Das war kurz.“"],
+      ["Lurch 2", "„Ich weiß. Ich habe geübt.“"],
+      "Sie sehen sich an. Dann sehen sie beide zur Wand. Dort läuft ein feiner dunkler Streifen entlang, von der Küche bis zur Badezimmertür. Es ist der Schimmel. Der aus der Küche hat sich über Wochen auf den Weg gemacht, und der aus dem Bad ist ihm entgegengewachsen. Auf halber Strecke haben sie sich getroffen.",
+      ["Lurch 1", "„Sie haben sich gefunden.“"],
+      ["Lurch 2", "„Rein hypothetisch sind das zwei Schimmel, die nicht streiten.“"],
+      ["Lurch 1", "„Das kann ich nicht kommentieren.“"],
+      ["Lurch 2", "„Brauchst du auch nicht.“"],
+      "Draußen geht die Tür. Der Halbe steht im Flur, mit Reif auf der Mütze. Er hat die Feder in der Hand und das Blatt in der Tasche.",
+      ["Der Halbe", "„Habt ihr euch vertragen?“"],
+      ["Lurch 1 und Lurch 2", "„Ja.“"],
+      ["Der Halbe", "„Gut. Ich muss euch etwas erzählen.“"],
+    ],
+    interaction: { kind: "match", title: "Quiz „Wer hat das gesagt?“", hidePlaces: true, placeholder: "– Person wählen –",
+      prompt: ["Ordne die Sätze den richtigen Personen zu."],
+      places: ["Frau Kröte", "Herr Reiher", "Lurch 1", "der Wasserläufer", "der Halbe", "Herr Olm"],
+      items: [
+        { name: "1. „Ich zähle nur halb. Aber ich zahle auch nur halb.“", answer: 4 },
+        { name: "2. „Das steht in meinem Zettel.“", answer: 0 },
+        { name: "3. „FRÜHER WAR ALLES BESSER!“", answer: 5 },
+        { name: "4. „Innovative Lösung! Weihnachtsschilf!“", answer: 3 },
+        { name: "5. „Ach so. Dann komme ich wohl noch einmal wieder.“", answer: 1 },
+        { name: "6. „Nur zur Sicherheit: Setzt euch alle.“", answer: 2 },
+      ],
+      solution: ["Lösung: 1 der Halbe, 2 Frau Kröte, 3 Herr Olm, 4 der Wasserläufer, 5 Herr Reiher, 6 Lurch 1."],
+    },
+  },
+
+  /* ---------- 20 ---------- */
+  { emoji: "💌", title: "Die Wahrheit über den Brief", act: ACT4, focus: "alle drei",
+    story: [
+      "Der Halbe erzählt. Er erzählt von der Nacht am Teich, vom Smalltalk, vom Päckchen und dem zerrissenen Blatt. Er erzählt es langsam, ohne Umwege, und diesmal hört ihm jeder bis zum Ende zu.",
+      "Als er fertig ist, ist es lange still.",
+      ["Lurch 1", "„Er hat uns nicht gedroht.“"],
+      ["Der Halbe", "„Nein.“"],
+      ["Lurch 1", "„Er hat gar keine Konsequenzen gemeint.“"],
+      ["Der Halbe", "„Doch. Aber ich glaube, er wusste nicht, welche.“"],
+      "Lurch 2 greift in seinen Schal und holt den Brief heraus. Er faltet ihn auf und legt ihn auf den Tisch. Er sagt nichts. Er hat auf diesen Moment gewartet, und jetzt fällt ihm kein Satz ein.",
+      ["Lurch 1", "„Du hattest es schon bemerkt.“"],
+      ["Lurch 2", "„Seit Tag 13. Ich habe es nicht gesagt, weil ich nicht sicher war. Und weil ich keine Lust hatte, ausgelacht zu werden.“"],
+      ["Der Halbe", "„Wer hätte dich ausgelacht?“"],
+      ["Lurch 2", "„Alle, die meine Theorien kennen.“"],
+      "Lurch 1 liest den Brief noch einmal. Nicht den Inhalt, sondern nur die ersten Buchstaben der Zeilen. Er liest langsam, fast flüsternd. Dann liest er sie noch einmal.",
+      ["Lurch 1", "„Das gibt es nicht.“"],
+      ["Lurch 2", "„Es gibt es.“"],
+      ["Lurch 1", "„Und was ist mit Theorie vier? Das war doch deine?“"],
+      ["Lurch 2", "„Der Brief ist eine Einladung in Behördensprache. Ja. Das war meine vierte Theorie. Ich habe es am 3. gesagt. Mit fünf Umwegen.“"],
+      ["Lurch 1", "„Wir haben dir nicht zugehört.“"],
+      ["Lurch 2", "„Nein.“"],
+      ["Lurch 1", "„Das tut mir leid.“"],
+      ["Lurch 2", "„Das hast du schon gesagt. Es reicht. Ehrlich.“"],
+    ],
+    interaction: { kind: "reveal", title: "Den Brief entschlüsseln", showLetter: true,
+      prompt: ["Schau dir den Brief aus Türchen 1 noch einmal an. Nimm von jeder Zeile den ersten Buchstaben. Welche Botschaft ergibt sich?"],
+      solution: [
+        "Lösung: L-A-D-E-T-M-I-C-H-E-I-N, also „LADET MICH EIN“.",
+        "Auflösung der Theorie-Frage von Türchen 3: Die richtige Antwort war Theorie 4: Der Brief ist eine Einladung, versteckt in Behördensprache. Wer sie am 3. Dezember gewählt hat, lag richtig und hätte es früher sagen sollen. Wer eine andere gewählt hat, ist in guter Gesellschaft. Das waren die drei Lurche auch.",
+      ],
+    },
+  },
+
+  /* ---------- 21 ---------- */
+  { emoji: "🍽️", title: "Das Menü", act: ACT4, focus: "Lurch 1",
+    story: [
+      "Es ist Zeit für einen Plan, und Lurch 1 hat sofort einen. Er sitzt am Küchentisch, mit dem Klemmbrett, aber diesmal lächelt er aus echter Zuversicht.",
+      ["Lurch 1", "„Wir laden ihn ein. Das ist die richtige Antwort, auf eine Einladung zu antworten. Er hat sich nicht getraut. Wir tun es für ihn.“"],
+      ["Lurch 2", "„Aber er kommt ja ohnehin zur Inspektion.“"],
+      ["Lurch 1", "„Das ist es ja. Er soll nicht kommen, weil er muss. Er soll kommen, weil wir es wollen.“"],
+      ["Der Halbe", "„Das hast du schön gesagt.“"],
+      ["Lurch 1", "„Danke. Ich habe es geübt.“"],
+      "Das Menü ist das Problem. Ein Graureiher frisst Fisch. Fisch ist auf einem Lurch-Tisch unpassend. Und Frösche und Molche sind für einen Reiher eigentlich Mahlzeiten, und das will niemand auf dem Teller haben, nicht einmal als Dekoration.",
+      ["Lurch 2", "„Rein hypothetisch darf es nichts geben, was ihn an Beute erinnert.“"],
+      ["Lurch 1", "„Und nichts, was uns an Verwandte erinnert.“"],
+      ["Der Halbe", "„Und nichts mit Schnecken. Du verträgst keine Schnecken.“"],
+      ["Lurch 2", "„Danke. Aber das habe ich doch nie erwähnt.“"],
+      ["Der Halbe", "„Du hast einmal drei Stunden darüber gesprochen.“"],
+      "Lurch 1 notiert alles. Er sieht zufrieden aus, als wäre die Welt wieder planbar. Ein Teil davon stimmt sogar.",
+    ],
+    interaction: { kind: "quiz", title: "Logikrätsel „Welches Menü passt?“", upper: true,
+      prompt: [
+        "Regeln:",
+        ["Kein Fisch.", "Nichts, was mit Lurchen verwandt ist (also keine Kaulquappen).", "Keine Schnecken, denn Lurch 2 verträgt sie nicht."],
+      ],
+      questions: [
+        { q: "Welches Menü ist das einzig passende?", options: [
+          "Algensalat, Fischstäbchen, Teichrosen-Tarte",
+          "Seerosensuppe, Wasserlinsen-Risotto, Teichrosen-Tarte",
+          "Mückenlarven-Canapés, Kaulquappenpudding, Teichrosen-Tarte",
+          "Schneckenpastete, Wasserlinsen-Risotto, Teichrosen-Tarte",
+        ], correct: 1 },
+      ],
+      solution: ["Lösung: B. In A stecken Fischstäbchen, in C Kaulquappen, in D Schnecken."],
+    },
+  },
+
+  /* ---------- 22 ---------- */
+  { emoji: "🧦", title: "Der Socken", act: ACT4, focus: "alle drei",
+    story: [
+      "Am 22. Dezember liegt der Socken wieder auf dem Tisch. Seit dem 1. Dezember hat ihn jeder von den dreien mehrfach in der Hand gehabt, aber niemand hat sich gefragt, was er eigentlich zu bedeuten hat. Heute fragen sie es.",
+      ["Lurch 2", "„Wir haben sechs Spuren. Und jetzt rein hypothetisch eine Methode, sie auszuwerten.“"],
+      ["Lurch 1", "„Ich habe sie notiert.“"],
+      ["Der Halbe", "„Ich habe die sechste noch nicht.“"],
+      "Er hält den Socken hoch und prüft ihn von allen Seiten. Dann steckt er vorsichtig seinen Arm hinein und stellt fest, dass er ihn bis zur Schulter nicht ausfüllt.",
+      ["Der Halbe", "„Das ist kein Bein, das zu einem von uns gehört. Es ist ein dünnes, langes Stelzenbein. So etwas bräuchte jemand, der im Wasser steht und wartet.“"],
+      ["Lurch 2", "„Das ist Spur sechs.“"],
+      "Sie legen alle Spuren auf den Tisch.",
+      "Lurch 2 überlegt lange. Dann sagt er: „Frau Kröte.“",
+      ["Lurch 1", "„Warum?“"],
+      ["Lurch 2", "„Das Monogramm R. Sie heißt Roswitha.“"],
+      ["Der Halbe", "„Und die anderen fünf Spuren?“"],
+      ["Lurch 2", "„Das ist nur eine Frage der Interpretation.“"],
+      ["Lurch 1", "„Eine Feder? Hat Frau Kröte Federn?“"],
+      ["Lurch 2", "„Rein hypothetisch … nein.“"],
+      ["Der Halbe", "„Dann nicht Frau Kröte.“"],
+    ],
+    interaction: { kind: "quiz", title: "Wem gehört der Socken?",
+      prompt: [
+        "Das sind die sechs Spuren:",
+        [
+          "Der Socken ist 40 Zentimeter lang.",
+          "Er riecht nach Fisch.",
+          "Die Abdrücke vor Herrn Olms Höhle hatten drei Zehen nach vorn, einen nach hinten.",
+          "Das Monogramm lautet R.",
+          "Am Teich lag eine graue Feder.",
+          "Der Socken passt nur über ein dünnes, langes Stelzenbein.",
+        ],
+      ],
+      questions: [
+        { q: "Wem gehört der Socken?", options: ["Frau Kröte (Roswitha)", "Herr Olm", "Der Wasserläufer", "Herr Biber", "Herr Reiher"], correct: 4 },
+      ],
+      solution: [
+        "Lösung: Herr Reiher. Frau Kröte hat kein langes Bein und keine Federn. Herr Olm hat keine Federn und frisst keinen Fisch. Der Wasserläufer ist viel zu klein. Herr Biber frisst Rinde, keinen Fisch. Nur der Reiher passt zu allen sechs Spuren.",
+        "Lurch 2 hat es als Letzter begriffen. Er sagt nur: „Ich hätte es wissen müssen. Der Socken lag die ganze Zeit im Flur seiner eigenen Wohnung.“",
+      ],
+    },
+  },
+
+  /* ---------- 23 ---------- */
+  { emoji: "🔌", title: "Der Vorabend", act: ACT4, focus: "alle drei",
+    story: [
+      "Der Plan steht. Das Essen ist vorbereitet, der Besenbaum steht in der Ecke, die Plätzchen kühlen aus. Es ist der 23. Dezember, kurz nach Sonnenuntergang. Lurch 1 geht noch einmal alles durch.",
+      ["Lurch 1", "„Nur zur Sicherheit: Wenn jetzt nichts mehr schiefgeht, haben wir morgen alles im Griff.“"],
+      ["Lurch 2", "„Du hast gerade ‚wenn‘ gesagt.“"],
+      ["Lurch 1", "„Das ist ein Fehler.“"],
+      "Es klopft. Wenn man nicht genau hinhört, hört man gar nichts. Der Wasserläufer steht im Flur und ist schon wieder halb weg.",
+      ["Der Wasserläufer", "„Hab gehört, bei euch gab es Stromprobleme. Ich hab’s gelöst! Dauert nur kurz!“"],
+      ["Lurch 1", "„Welche Stromprobleme?“"],
+      "Der Wasserläufer ist schon verschwunden. Er hat aber nichts repariert, sondern ein langes Verlängerungskabel von Frau Krötes Wohnung bis in die Küche verlegt und alles dort angeschlossen. Das Kabel hängt jetzt quer durch das Treppenhaus.",
+      "Der Strom geht an. Er geht aus. Er geht wieder an. Der Herd springt an, der Ofen auch, und die Plätzchen, die auf dem Blech lagen, werden schwarz, bevor jemand reagieren kann. Im Wohnzimmer kippt der Besenbaum um, weil jemand das Kabel gestreift hat. Aus dem Treppenhaus hört man Frau Kröte: „DAS STEHT IN DER HAUSORDNUNG!“",
+      "Lurch 1 steht in der Küche zwischen schwarzen Plätzchen und dem umgestürzten Baum. Dann setzt er sich auf den Boden. Er hat sein Klemmbrett in der Hand. Er legt es neben sich ab.",
+      ["Lurch 1", "„Ich habe alles richtig gemacht. Und es hat trotzdem nicht funktioniert. Manches lässt sich nicht planen. Das heißt nicht, dass ich es schlecht geplant habe.“"],
+      ["Lurch 2", "„Nein. Hast du nicht.“"],
+      "Der Halbe setzt sich neben ihn und lehnt sich an.",
+      ["Der Halbe", "„Gibt es auch einen Plan für den Fall, dass wir glücklich sind?“"],
+      "Lurch 1 sieht ihn an. Er öffnet den Mund, aber es kommt keine Antwort. Es ist die erste Frage, auf die er keinen Plan hat.",
+      "Lurch 2 hat unterdessen die Lichterkette in der Hand. Er hat Schnupfen und einen Schal, der ihm bis über die Nase reicht, und er arbeitet sich durch die 31 Einzelteile. Er sagt kein Wort. Er braucht nur noch eine halbe Stunde.",
+    ],
+    interaction: { kind: "choice", title: "Die letzte Entscheidung",
+      prompt: ["Wie soll das Essen morgen beginnen?"],
+      options: [
+        { label: "Mit dem Essen", response: "Lurch 1: „Das ist effizient.“" },
+        { label: "Mit einem Gespräch", response: "Lurch 2: „Das ist riskant. Aber interessant.“" },
+        { label: "Mit einem Toast", response: "Der Halbe: „Ich habe schon etwas vorbereitet.“" },
+      ],
+      after: "Egal, wie du dich entscheidest: Es hat keine Folgen. Lurch 1 notiert es ein letztes Mal. Diesmal lächelt er dabei mit dem ganzen Gesicht.",
+    },
+  },
+
+  /* ---------- 24 ---------- */
+  { emoji: "🎄", title: "Inspektion", act: FINALE, focus: "alle",
+    story: [
+      "Der 24. Dezember, 17:58 Uhr. Die Lichterkette liegt noch in Lurch 2s Händen. Er hat zwei Minuten. Er hat die letzte Verbindung gelötet, er steckt sie ein, und für einen Augenblick passiert nichts.",
+      "Dann leuchtet sie. Rot, weiß, rot, weiß, im Wechsel.",
+      ["Lurch 2", "„Ich habe sie fertig gemacht.“"],
+      ["Lurch 1", "„Du hast sie fertig gemacht.“"],
+      ["Der Halbe", "„Du hast etwas fertig gemacht.“"],
+      ["Lurch 2", "„Rein hypothetisch ist das die erste Sache.“"],
+      "Es ist 18:00 Uhr. Es klopft. Herr Reiher steht in der Tür, auf einem Bein, mit dem Notizbuch in der einen Hand und einem kleinen Päckchen in der anderen. Er ist pünktlich.",
+      ["Herr Reiher", "„Guten Abend. Ich komme zur Weihnachtsinspektion.“"],
+      ["Lurch 1", "„Bitte kommen Sie herein.“"],
+      "Er tritt ein und sieht sich um. Der Besenbaum steht wieder. Die Plätzchen, die nicht verbrannt sind, liegen auf einem Teller. Die Lichterkette leuchtet. Auf dem Tisch stehen drei Gedecke, aber heute vier.",
+      ["Herr Reiher", "„Festlich. Ja. Das ist festlich.“ Er macht einen Haken. „Bewohnt. Eindeutig bewohnt.“ Noch ein Haken. „Konfliktfrei.“"],
+      "Er sieht die drei an. Alle lächeln gleichzeitig. Es ist das erste Mal, dass das Lächeln stimmt.",
+      ["Herr Reiher", "„Das … lasse ich gelten.“"],
+      "Er schließt das Notizbuch. Dann öffnet er es wieder, blättert, schließt es.",
+      ["Herr Reiher", "„Ich muss etwas gestehen. Ich wollte Ihnen keine Konsequenzen androhen. Ich hatte nur … ich habe es nicht über mich gebracht, das Wort ‚Einladung‘ zu schreiben.“"],
+      ["Der Halbe", "„Wir haben es gelesen.“"],
+      ["Herr Reiher", "„Haben Sie?“"],
+      ["Lurch 2", "„Es hat zwanzig Tage gedauert.“"],
+      ["Herr Reiher", "„Das ist … beschämend.“"],
+      ["Der Halbe", "„Es war ein guter Brief.“"],
+      "Der Halbe geht zum Tisch, nimmt den Socken und hält ihn dem Reiher hin. Er ist rot und weiß gestrickt, 40 Zentimeter lang, mit grünen Würmern mit roten Mützen.",
+      ["Herr Reiher", "„Mein Socken! Den suche ich seit 2019.“"],
+      ["Der Halbe", "„Er lag im Flur.“"],
+      ["Herr Reiher", "„In meiner eigenen Wohnung? Ich habe vermutlich einen Termin vergessen.“"],
+      "Es klopft noch einmal. Frau Kröte steht vor der Tür, mit einem Zettel in der Hand. Er ist genau eine Zeile lang. „Frohe Weihnachten.“ Dahinter steht kein weiterer Satz. Lurch 1 liest ihn dreimal, um sicher zu sein.",
+      ["Lurch 1", "„Das ist … sehr kurz.“"],
+      ["Frau Kröte", "„Es hat auch lange gedauert, es zu schreiben.“"],
+      "Der Wasserläufer taucht kurz im Flur auf, wirft ein Paket auf den Boden und ist weg. Es ist ein Tannenwedel, genau der, den sie am 8. bestellt haben, zu spät und beschädigt. Aus dem Hörer des Telefons im Flur hört man Herrn Biber: „Der Junge ist ein Genie.“ Aus dem Teich kommt ein ferner Ruf: „FRÜHER WAR DAS ESSEN BESSER!“ Niemand antwortet, und niemand erwartet es.",
+      ["Lurch 1", "„Herr Reiher. Die Konsequenzen.“"],
+      ["Herr Reiher", "„Ja?“"],
+      ["Lurch 1", "„Sie haben welche angekündigt.“"],
+      "Herr Reiher sieht in sein Notizbuch. Er blättert. Er findet die Seite. Er liest sie vor.",
+      ["Herr Reiher", "„Ich esse mit Ihnen zu Abend. Wenn es recht ist.“"],
+      "Es ist still. Dann sagt der Halbe leise: „Es ist recht.“",
+      "Sie setzen sich. Das Essen ist gut, die Plätzchen sind teilweise verbrannt, und die Lichterkette flackert nur einmal. Frau Kröte nörgelt über die Sitzordnung. Lurch 2 erklärt eine Theorie, und diesmal hört ihm jeder bis zum Ende zu.",
+      "Später, am Fenster, fragt der Halbe: „Gibt es nächstes Jahr wieder eine Inspektion?“",
+      ["Herr Reiher", "„Ich habe es mir notiert.“"],
+      ["Der Halbe", "„Wo?“"],
+      ["Herr Reiher", "„Das … weiß ich nicht mehr.“"],
+      "Alle lächelten. Diesmal stimmte es.",
+    ],
+    interaction: { kind: "reveal", title: "Das große Abschlussquiz", button: "Lösungen anzeigen",
+      prompt: [[
+        "1. Um wie viel Uhr sollte die Inspektion stattfinden?",
+        "2. Wie lang war der Socken?",
+        "3. Aus welchem Land kam die Postkarte der Familie Frosch?",
+        "4. Welcher Buchstabe stand für Lurch 1s letzten Notfallplan?",
+        "5. Welches Tier ist Herr Biber? Und für wen arbeitet er?",
+        "6. Welche Botschaft steckte im Brief?",
+        "7. Was waren am Ende die „Konsequenzen“?",
+      ]],
+      solution: [
+        "Lösungen:",
+        [
+          "1. 18 Uhr.",
+          "2. 40 Zentimeter.",
+          "3. Italien.",
+          "4. Plan Ä.",
+          "5. Ein Biber. Er ist der Chef des Wasserläufers.",
+          "6. „LADET MICH EIN“.",
+          "7. Ein gemeinsames Abendessen.",
+        ],
+        "Frohe Weihnachten aus Raum 464! 🐸🎄",
+      ],
+    },
+  },
+];
+
+/* Reihenfolge der Türen im Raster (gemischt). Tür 6 und 24 sind groß. */
+const ORDER = [7,15,1,24,19,10,4,22,13,2,18,9,21,6,16,11,3,23,14,8,20,5,12,17];
+const BIG_DOORS = [24, 6];
+
+/* ===================================================== */
+
+const STORAGE_KEY = "lurchi-teich-adventskalender-geoeffnet";
+const params = new URLSearchParams(location.search);
+const urlTest = params.has("test");
+const preview = ALLE_TUEREN_OFFEN || urlTest;
+
+function today() {
+  if (urlTest) {
+    const d = parseInt(params.get("test"), 10);
+    return { month: 11, day: isNaN(d) ? 24 : d };
+  }
+  const now = new Date();
+  return { month: now.getMonth(), day: now.getDate() };
+}
+function unlockedUntil() {
+  if (ALLE_TUEREN_OFFEN && !urlTest) return 24;
+  const t = today();
+  if (t.month !== 11) return t.month === 0 ? 24 : 0;
+  return Math.min(t.day, 24);
+}
+
+function loadOpened() {
+  if (preview) return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []); }
+  catch { return new Set(); }
+}
+function saveOpened(set) {
+  if (preview) return;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...set])); } catch {}
+}
+
+const opened = loadOpened();
+const maxDay = unlockedUntil();
+const cal = document.getElementById("calendar");
+
+/* Farbvarianten der Türen (wiederholen sich der Reihe nach im Raster) */
+const DOOR_COLORS = ["c-mint", "c-blush", "c-white", "c-sky", "c-butter", "c-blush", "c-mint", "c-rose", "c-white", "c-butter", "c-sky", "c-mint"];
+/* Unterzeile auf den großen Türen */
+const BIG_DOOR_LABELS = { 6: "Nikolaus", 24: "Heiligabend" };
+
+ORDER.forEach((n, idx) => {
+  const slot = document.createElement("div");
+  slot.className = "slot " + DOOR_COLORS[idx % DOOR_COLORS.length];
+  if (BIG_DOORS.includes(n)) slot.classList.add("big", n === 6 ? "b-rose" : "b-mint");
+  if (n > maxDay) slot.classList.add("locked");
+  if (!ALLE_TUEREN_OFFEN && n === maxDay && today().month === 11) slot.classList.add("today");
+  if (opened.has(n) && n <= maxDay) slot.classList.add("open");
+
+  slot.innerHTML = `
+    <div class="inside">${DOORS[n-1].emoji}</div>
+    <button class="door" aria-label="Türchen ${n}">
+      <span class="face">
+        <span class="num">${n}</span>
+        ${BIG_DOOR_LABELS[n] ? `<span class="big-label">${BIG_DOOR_LABELS[n]}</span>` : ""}
+      </span>
+      <span class="back"></span>
+    </button>`;
+  slot.querySelector(".door").addEventListener("click", () => openDoor(n, slot));
+  slot.querySelector(".inside").addEventListener("click", () => { if (slot.classList.contains("open")) showCard(n); });
+  cal.appendChild(slot);
+});
+
+function openDoor(n, slot) {
+  if (n > maxDay) {
+    const t = today();
+    const diff = n - (t.month === 11 ? t.day : 0);
+    slot.classList.remove("shake"); void slot.offsetWidth; slot.classList.add("shake");
+    toast(t.month === 11
+      ? `Geduld! Noch ${diff} ${diff === 1 ? "Tag" : "Tage"} bis Türchen ${n} 🦎`
+      : `Der Kalender startet am 1. Dezember 🎄`);
+    return;
+  }
+  if (slot.classList.contains("open")) { showCard(n); return; }
+  slot.classList.add("open");
+  slot.classList.remove("today");
+  opened.add(n); saveOpened(opened);
+  burst(slot);
+  setTimeout(() => showCard(n), 750);
+}
+
+/* ---------- Popup ---------- */
+const overlay = document.getElementById("overlay");
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+/* Textzeile oder (als Array) Aufzählung */
+function textBlock(item) {
+  if (item && item.speaker) {
+    const p = el("p");
+    p.appendChild(el("span", "speaker", item.speaker + ": "));
+    p.appendChild(document.createTextNode(item.text));
+    return p;
+  }
+  if (Array.isArray(item)) {
+    const ul = el("ul");
+    item.forEach(li => ul.appendChild(el("li", null, li)));
+    return ul;
+  }
+  return el("p", null, item);
+}
+function letterEl() {
+  const box = el("div", "letter");
+  LETTER.forEach((line, i) => box.appendChild(el("div", i === LETTER.length - 1 ? "sig" : null, line)));
+  return box;
+}
+function factEl(text) {
+  const box = el("div", "fact");
+  box.appendChild(el("b", null, "🐸 Aus dem echten Sumpf"));
+  box.appendChild(document.createTextNode(text));
+  return box;
+}
+/* Bild mit optionaler Bildunterschrift; fehlt die Datei, wird es einfach ausgeblendet */
+function imageEl(src, caption, alt) {
+  const fig = el("figure", "pic");
+  const img = el("img");
+  img.src = src;
+  img.alt = alt || caption || "";
+  img.loading = "lazy";
+  img.onerror = () => fig.remove();
+  fig.appendChild(img);
+  if (caption) fig.appendChild(el("figcaption", null, caption));
+  return fig;
+}
+function renderStory(box, items) {
+  items.forEach(it => {
+    if (typeof it === "string") box.appendChild(el("p", null, it));
+    else if (it.image) box.appendChild(imageEl(it.image, it.caption, it.alt));
+    else if (Array.isArray(it)) {
+      const p = el("p");
+      p.appendChild(el("span", "speaker", it[0] + ": "));
+      p.appendChild(document.createTextNode(it[1]));
+      box.appendChild(p);
+    }
+    else if (it.letter) box.appendChild(letterEl());
+    else if (it.fact) box.appendChild(factEl(it.fact));
+    else if (it.note) {
+      const n = el("div", "note");
+      if (it.label) n.appendChild(el("span", "label", it.label));
+      it.note.forEach(line => n.appendChild(el("div", null, line)));
+      box.appendChild(n);
+    }
+  });
+}
+
+function renderInteraction(box, ia, onDone) {
+  const wrap = el("div", "interaction");
+  wrap.appendChild(el("h3", null, "Interaktion: " + ia.title));
+  (ia.prompt || []).forEach(line => wrap.appendChild(textBlock(line)));
+  const result = el("div", "result");
+  result.hidden = true;
+  const showResult = lines => {
+    result.replaceChildren(...lines.filter(Boolean).map(textBlock));
+    result.hidden = false;
+    onDone();
+  };
+
+  if (ia.kind === "choice") {
+    const btns = ia.options.map(opt => {
+      const b = el("button", "opt", opt.label);
+      b.onclick = () => {
+        btns.forEach(x => x.classList.toggle("chosen", x === b));
+        showResult([ia.response, opt.response, ia.after]);
+      };
+      wrap.appendChild(b);
+      return b;
+    });
+  }
+
+  else if (ia.kind === "quiz") {
+    let answered = 0, right = 0;
+    const feedback = [];
+    const graded = ia.questions.filter(q => !q.guess).length;
+    ia.questions.forEach(q => {
+      if (q.q) wrap.appendChild(el("p", "q", q.q));
+      const upper = ia.upper || q.upper;
+      const btns = q.options.map((o, i) => {
+        const b = el("button", "opt", upper ? String.fromCharCode(65 + i) + ") " + o : String.fromCharCode(97 + i) + ") " + o);
+        b.onclick = () => {
+          btns.forEach(x => x.disabled = true);
+          if (q.guess) b.classList.add("chosen");
+          else {
+            btns[q.correct].classList.add("correct");
+            if (i === q.correct) right++; else b.classList.add("wrong");
+          }
+          if (q.feedback && q.feedback[i]) feedback.push(q.feedback[i]);
+          if (++answered === ia.questions.length) {
+            const score = graded > 1 ? `${right} von ${graded} richtig.` : (right ? "Richtig!" : "Leider nicht ganz.");
+            showResult([...feedback, score, ...(ia.solution || [])]);
+          }
+        };
+        wrap.appendChild(b);
+        return b;
+      });
+    });
+  }
+
+  else if (ia.kind === "match") {
+    const lab = (p, i) => ia.hidePlaces ? p : ia.letters ? `${String.fromCharCode(65 + i)}: ${p}` : `${i + 1}. ${p}`;
+    if (!ia.hidePlaces) wrap.appendChild(textBlock(ia.places.map(lab)));
+    const selects = ia.items.map(item => {
+      const row = el("div", "match-row");
+      row.appendChild(el("span", null, item.name));
+      const s = el("select");
+      s.appendChild(new Option(ia.placeholder || (ia.letters ? "– Ende wählen –" : "– Ort wählen –"), ""));
+      ia.places.forEach((p, i) => s.appendChild(new Option(lab(p, i), i)));
+      row.appendChild(s);
+      wrap.appendChild(row);
+      return s;
+    });
+    const check = el("button", "btn small", "Prüfen");
+    check.onclick = () => {
+      let right = 0;
+      selects.forEach((s, i) => {
+        const ok = s.value !== "" && +s.value === ia.items[i].answer;
+        if (ok) right++;
+        s.classList.toggle("ok", ok);
+        s.classList.toggle("bad", !ok);
+      });
+      showResult([`${right} von ${ia.items.length} richtig.`, ...ia.solution]);
+    };
+    wrap.appendChild(check);
+  }
+
+  else if (ia.kind === "reveal") {
+    if (ia.showLetter) wrap.appendChild(letterEl());
+    const b = el("button", "btn small", ia.button || "Lösung anzeigen");
+    b.onclick = () => { b.remove(); showResult(ia.solution); };
+    wrap.appendChild(b);
+  }
+
+  else if (ia.kind === "info") {
+    if (ia.showLetter) wrap.appendChild(letterEl());
+    onDone();
+  }
+
+  wrap.appendChild(result);
+  box.appendChild(wrap);
+}
+
+function showCard(n) {
+  const d = DOORS[n-1];
+  document.getElementById("m-emoji").textContent = d.emoji;
+  document.getElementById("m-date").textContent = `${n}. Dezember`;
+  document.getElementById("m-title").textContent = d.placeholder ? `Türchen ${n}` : `Türchen ${n}: ${d.title}`;
+
+  const meta = document.getElementById("m-meta");
+  meta.replaceChildren();
+  if (d.act) meta.appendChild(el("span", "chip act", d.act));
+  if (d.focus) meta.appendChild(el("span", "chip", "Im Mittelpunkt: " + d.focus));
+
+  const body = document.getElementById("m-body");
+  body.replaceChildren();
+  if (d.placeholder) {
+    body.appendChild(el("p", null, "Die Geschichte hinter diesem Türchen wird gerade noch geschrieben. Schau bald wieder vorbei!"));
+  } else {
+    if (d.image) body.appendChild(imageEl(d.image, d.imageCaption, d.imageAlt || d.title));
+    renderStory(body, d.story);
+    if (d.fact && !d.factAfter) body.appendChild(factEl(d.fact));
+    let factShown = false;
+    if (d.interaction) renderInteraction(body, d.interaction, () => {
+      if (d.fact && d.factAfter && !factShown) { factShown = true; body.appendChild(factEl(d.fact)); }
+    });
+  }
+
+  overlay.classList.add("show");
+  document.getElementById("card").scrollTop = 0;
+  document.getElementById("m-x").focus();
+}
+function closeCard() { overlay.classList.remove("show"); }
+document.getElementById("m-close").onclick = closeCard;
+document.getElementById("m-x").onclick = closeCard;
+overlay.addEventListener("click", e => { if (e.target === overlay) closeCard(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeCard(); });
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+/* ---------- Countdown ---------- */
+(function countdown() {
+  const t = today(), el = document.getElementById("countdown");
+  if (t.month === 11 && t.day < 24) {
+    const left = 24 - t.day;
+    el.textContent = `Noch ${left} ${left === 1 ? "Tag" : "Tage"} bis Heiligabend ✨`;
+  } else if (t.month === 11 && t.day <= 26) {
+    el.textContent = "Frohe Weihnachten! 🎄";
+  } else if (t.month < 11 && t.month > 0) {
+    const now = new Date(), start = new Date(now.getFullYear(), 11, 1);
+    const left = Math.ceil((start - now) / 86400000);
+    el.textContent = `Noch ${left} Tage bis zum ersten Türchen`;
+  }
+})();
+
+/* ---------- Vorschau-Leiste ---------- */
+if (preview) {
+  document.getElementById("previewbar").hidden = false;
+  document.getElementById("previewtext").textContent = urlTest
+    ? `Testmodus: simuliert wird der ${maxDay}. Dezember.`
+    : "Vorschau: Alle Türen sind offen (nichts wird gespeichert).";
+  document.getElementById("resetbtn").onclick = () =>
+    document.querySelectorAll(".slot.open").forEach((s, i) => setTimeout(() => s.classList.remove("open"), i * 40));
+}
+
+/* ---------- Lichterkette ---------- */
+(function lights() {
+  const box = document.getElementById("lights");
+  const count = Math.max(10, Math.floor(innerWidth / 46));
+  for (let i = 0; i < count; i++) box.appendChild(document.createElement("span"));
+})();
+
+/* ---------- Funkeln beim Öffnen ---------- */
+function burst(slot) {
+  const r = slot.getBoundingClientRect();
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement("div");
+    s.textContent = ["✨","❄️","💚","🤍"][i % 4];
+    Object.assign(s.style, {
+      position: "fixed", left: r.left + r.width/2 + "px", top: r.top + r.height/2 + "px",
+      fontSize: (12 + Math.random()*14) + "px", pointerEvents: "none", zIndex: 30,
+      transition: "transform .9s ease-out, opacity .9s ease-out"
+    });
+    document.body.appendChild(s);
+    const a = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 80;
+    requestAnimationFrame(() => {
+      s.style.transform = `translate(${Math.cos(a)*dist}px, ${Math.sin(a)*dist}px) rotate(${Math.random()*360}deg)`;
+      s.style.opacity = 0;
+    });
+    setTimeout(() => s.remove(), 1000);
+  }
+}
+
+/* ---------- Schneefall ---------- */
+(function snow() {
+  const c = document.getElementById("snow"), ctx = c.getContext("2d");
+  let w, h, flakes;
+  function resize() {
+    w = c.width = innerWidth; h = c.height = innerHeight;
+    flakes = Array.from({ length: Math.min(90, Math.floor(w / 12)) }, (_, i) => ({
+      x: Math.random()*w, y: Math.random()*h, r: Math.random()*2.6 + 1,
+      s: Math.random()*.6 + .25, d: Math.random()*Math.PI*2, c: i % 3
+    }));
+  }
+  /* Pastell-Flocken: Mint, Rosé, Himmelblau */
+  const FLAKE_COLORS = ["rgba(159,214,178,.55)", "rgba(240,167,164,.45)", "rgba(169,214,234,.55)"];
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    FLAKE_COLORS.forEach((col, ci) => {
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      for (const f of flakes) {
+        if (f.c !== ci) continue;
+        if (!still) {
+          f.y += f.s; f.d += .01; f.x += Math.sin(f.d) * .4;
+          if (f.y > h) { f.y = -5; f.x = Math.random()*w; }
+        }
+        ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+      }
+      ctx.fill();
+    });
+    if (!still) requestAnimationFrame(draw);
+  }
+  addEventListener("resize", resize);
+  resize(); draw();
+})();
+</script>
+</body>
+</html>
