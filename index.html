@@ -275,7 +275,12 @@
   }
   .pic figcaption { font-size: .85rem; color: var(--muted); text-align: center; margin-top: 6px; font-style: italic; }
   .card-body p { font-size: 1.02rem; line-height: 1.65; margin: 0 0 11px; }
-  .card-body .speaker { font-weight: 800; color: var(--red-ink); }
+  /* Dialogzeilen: nur der Sprechername ist farbig */
+  .line          { --sp: #8a6514; }
+  .line.sp-l1    { --sp: var(--red-ink); }
+  .line.sp-l2    { --sp: #3f6f86; }
+  .line.sp-halbe { --sp: #2f5a45; }
+  .card-body .speaker { font-weight: 800; color: var(--sp, var(--red-ink)); }
   .card-body ul { margin: 0 0 12px; padding-left: 22px; line-height: 1.6; }
   .letter {
     font-family: Georgia, 'Times New Roman', serif; font-size: .98rem; line-height: 1.6;
@@ -297,10 +302,10 @@
     padding: 12px 16px; margin: 10px 0 14px; line-height: 1.6;
   }
   .fact b { display: block; color: var(--green-ink); margin-bottom: 3px; }
-  .interaction { margin-top: 20px; border-top: 2px dashed var(--mint); padding-top: 18px; }
+  .interaction { margin-top: 20px; border-top: 2px dashed #e6c25a; padding-top: 18px; }
   .interaction h3 {
     font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600;
-    margin: 0 0 8px; font-size: 1.2rem; color: var(--red-ink);
+    margin: 0 0 8px; font-size: 1.2rem; color: #9a6b00;
   }
   .interaction .q { font-weight: 800; margin: 14px 0 4px; }
   .opt {
@@ -463,7 +468,7 @@ const DOORS = [
   { emoji: "✉️", title: "Einschreiben", act: ACT1, focus: "alle drei",
     story: [
       "Der Seerosenhof ist ein Wohnhaus am Teich. Im vierten Stock, in Raum 464, wohnen drei Lurche. Es ist der 1. Dezember, früh am Morgen.",
-      "Es klopft einmal. Als Lurch 1 die Tür öffnet, ist niemand mehr zu sehen. Auf der Fußmatte liegt ein Brief. Das war der Wasserläufer, der Paketbote des Hauses. Er ist der schnellste im ganzen Teich. Zuverlässig ist er nicht. Der Brief wurde offenbar im Vorbeilaufen geworfen.",
+      "Es klopft einmal. Als Lurch 1 die Tür öffnet, ist niemand mehr zu sehen. Auf der Fußmatte liegt ein Brief. Das war der Wasserläufer, der Paketbote des Hauses. Er ist der Schnellste im ganzen Teich. Zuverlässig ist er nicht. Der Brief wurde offenbar im Vorbeilaufen geworfen.",
       ["Lurch 1", "„Ein Einschreiben vom Vermieter, Herrn Reiher. Nur zur Sicherheit: Setzt euch alle.“"],
       ["Lurch 2", "„Ich sitze schon.“"],
       "Der Brief lautet:",
@@ -471,9 +476,9 @@ const DOORS = [
       ["Lurch 1", "„Weihnachtsinspektion. Festlich, bewohnt, konfliktfrei. Und wenn nicht, gibt es Konsequenzen. Er schreibt nicht, welche. Das ist das Schlimmste an Konsequenzen.“"],
       ["Lurch 2", "„Rein hypothetisch können Konsequenzen auch etwas Gutes sein.“"],
       ["Lurch 1", "„Konsequenzen sind nie etwas Gutes.“"],
-      ["Der Halbe", "„Er hat uns durchnummeriert! Mieter 1, Mieter 2 und Mieter ½. Ich zähle nur halb dann zahle ich auch nur halb!“"],
+      ["Der Halbe", "„Er hat uns durchnummeriert! Mieter 1, Mieter 2 und Mieter ½. Ich zähle nur halb, dann zahle ich auch nur halb!“"],
       ["Lurch 1", "„Das ist nicht der Punkt.“"],
-      "Lurch 1 sieht auf den Kalender an der Wand. Es sind noch 23 Tage bis zum 24. Dezember. Sein Bommel zittert.",
+      "Lurch 1 sieht auf den Kalender an der Wand. Es sind noch 23 Tage bis zum 24. Dezember. Der Bommel an seiner Mütze zittert.",
     ],
     interaction: { kind: "quiz", title: "Was sollten die drei als Erstes tun?",
       prompt: ["Nur eine Antwort ist richtig."],
@@ -486,7 +491,7 @@ const DOORS = [
           ], correct: 2,
           feedback: [
             "Der Halbe: „Das ist mein Plan!“ Lurch 1: „Das ist kein Plan.“",
-            "Im Brief steht: „Eine Rückfrage ist nicht erforderlich.“ Das wäre unhöflich.",
+            "Im Brief steht: „Eine Rückfrage ist nicht erforderlich.“ Das wäre unhöflich und wohl nicht erwünscht.",
             null,
             "Lurch 2: „Das ist die Theorie, die ich am wenigsten mag.“",
           ] },
@@ -514,13 +519,13 @@ const DOORS = [
       ["Lurch 2", "„Wenn du im Bad etwas entfernst, sprichst du vorher mit mir.“"],
       ["Lurch 1", "„Warum?“"],
       ["Lurch 2", "„Rein hypothetisch.“"],
-      ["Lurch 1", "„Ach so.“ Im gleichen Moment hat er schon die nächste Zeile geschrieben."],
+      ["Lurch 1", "„Ach so.“ Im selben Moment hat er schon die nächste Zeile geschrieben."],
       ["Der Halbe", "„Er hat ‚Ach so‘ gesagt und nicht nachgefragt. Spannend!“"],
-      "Zuletzt prüft Lurch 1 den Flur. Hinter der Garderobe liegt etwas. Der Halbe zieht es hervor. Es ist eine schwarze Socke, weiß gestrickt. Auf der Socke sind grüne Würmer mit roten Mützen.",
-      ["Der Halbe", "„Das sind wir! Wir sind Würmer!“"],
-      ["Lurch 1", "„Wir sind keine Würmer.“"],
-      ["Der Halbe", "„Auf dem Socken schon!“"],
-      ["Lurch 2", "„Wir tragen keine Socken. Rein hypothetisch gehört er jemand anderem.“"],
+      "Zuletzt prüft Lurch 1 den Flur. Hinter der Garderobe liegt etwas. Der Halbe zieht es hervor. Es ist ein Socken, rot und weiß gestrickt. Auf dem Socken sind grüne Würmer mit roten Mützen.",
+      ["Der Halbe", "„Komischer Sockengeschmack.“"],
+      ["Lurch 1", "„Von wem ist der Socken?“"],
+      ["Der Halbe", "„Irgendwie erinnert mich der Socken an jemanden …“"],
+      ["Lurch 2", "„Von uns ist der nicht. Rein hypothetisch gehört er jemand anderem.“"],
       "Lurch 1 schreibt: „Mangel Nr. 9: Fremder Socken im Flur.“",
     ],
     fact: "Schimmelpilze wachsen dort, wo es feucht ist und etwas Organisches zu fressen gibt. Lurche nehmen einen Teil ihres Sauerstoffs über die feuchte Haut auf, deshalb darf sie nicht austrocknen. Eidechsen sind Reptilien und mit Lurchen nicht näher verwandt.",
@@ -538,7 +543,7 @@ const DOORS = [
   /* ---------- 3 ---------- */
   { emoji: "💭", title: "Theorien", act: ACT1, focus: "Lurch 2",
     story: [
-      "Am Abend hat Lurch 2 die Wand gegenüber dem Sofa mit Zetteln beklebt. Er trägt den Schal, obwohl es in der Wohnung warm ist.",
+      "Am Abend hat Lurch 2 die Wand neben dem Sofa mit Zetteln beklebt. Er trägt den Schal, obwohl es in der Wohnung warm ist.",
       ["Lurch 2", "„Ich habe fünf Theorien, warum Herr Reiher uns diesen Brief geschrieben hat.“"],
       ["Lurch 1", "„Bitte kurz.“"],
       ["Der Halbe", "„Mit Popcorn!“"],
@@ -550,9 +555,8 @@ const DOORS = [
       ["Theorie 3", "Herr Reiher will uns fressen. Dafür spricht, dass er ein Reiher ist."],
       ["Theorie 4", "Herr Reiher will uns etwas mitteilen, das er nicht direkt schreiben kann. Dafür spricht, dass der Brief so steif klingt."],
       ["Theorie 5", "Frau Kröte hat den Brief diktiert, um uns zu ärgern. Dafür spricht, dass sie alles tut, um uns zu ärgern."],
-      ["Der Halbe", "„Theorie 3 ist die ehrlichste!“"],
+      ["Der Halbe", "„Theorie 2 ist die beste! Das würde nämlich heißen, dass wir uns um nichts zu kümmern brauchen.“"],
       ["Lurch 1", "„Theorie 3 ist die schlimmste.“"],
-      ["Der Halbe", "„Das ist kein Gegensatz!“"],
       "Lurch 1 notiert alle fünf. Er ist blass geworden, soweit ein grüner Lurch blass werden kann.",
       ["Lurch 1", "„Welche stimmt?“"],
       ["Lurch 2", "„Rein hypothetisch stimmt eine davon. Wenn ich wüsste, welche, hätte ich nur eine Theorie.“"],
@@ -577,20 +581,18 @@ const DOORS = [
       "Mitten in der Nacht wacht der Halbe auf. Das Fenster ist beschlagen, und draußen fällt zum ersten Mal Schnee. Er springt aus dem Bett und rennt in Lurch 2s Zimmer.",
       ["Der Halbe", "„Es schneit! Wach auf!“"],
       ["Lurch 2", "„Es ist drei Uhr.“"],
-      ["Der Halbe", "„Das ist die beste Zeit für Schnee!“"],
-      "Lurch 2 setzt sich auf. Er zieht den Schal um den Hals.",
+      ["Der Halbe", "„Aber es schneit!“"],
+      "Lurch 2 setzt sich auf. Er setzt seine Mütze auf und legt den Schal um den Hals.",
       ["Der Halbe", "„Was passiert eigentlich mit uns, wenn es friert?“"],
-      ["Lurch 2", "„Das ist eine sehr gute Frage. Ich habe dazu eine Theorie, einen Vortrag und eine Fußnote.“"],
-      ["Der Halbe", "„Die Kurzfassung bitte.“"],
-      ["Lurch 2", "„Wir sind wechselwarm. Unsere Körpertemperatur hängt von der Umgebung ab. Wird es kalt, werden wir langsamer, bis wir uns kaum noch bewegen. Das nennt man Winterstarre.“"],
+      ["Lurch 2", "„Das ist eine sehr gute Frage. Wir sind wechselwarm. Unsere Körpertemperatur hängt von der Umgebung ab. Wird es kalt, werden wir langsamer, bis wir uns kaum noch bewegen. Das nennt man Winterstarre.“"],
       ["Der Halbe", "„Also schlafen wir nicht?“"],
       ["Lurch 2", "„Nein. Wir sind nur sehr langsam.“"],
-      ["Der Halbe", "„Dann bin ich ja jeden Morgen im Winter!“"],
+      ["Der Halbe", "„Dann bin ich ja jeden Morgen in der Winterstarre!“"],
       "Beide lachen. Aus dem Flur kommt Lurch 1 im Schlafanzug, den Notizblock in der Hand.",
       ["Lurch 1", "„Ich habe einen Plan, wenn es schneit.“"],
       ["Der Halbe", "„Und der wäre?“"],
       ["Lurch 1", "„Schneelurchi bauen.“"],
-      "Sie gingen zu dritt raus, um einen Schneelurch zu bauen und den ersten Tag im Schnee gemeinsam zu verbringen.",
+      "Sie gehen zu dritt hinaus, bauen einen Schneelurch und verbringen den ersten Schneetag gemeinsam.",
     ],
     fact: "Lurche sind wechselwarm. Im Winter fallen sie in die Winterstarre, in der Herzschlag und Stoffwechsel stark herabgesetzt sind. Wo sie überwintern, hängt von der Art ab. Manche Frösche liegen am Gewässergrund, Kröten und viele Molche an Land in frostfreien Verstecken.",
     factAfter: true,
@@ -617,88 +619,76 @@ const DOORS = [
     story: [
       "Lurch 1 hat die Wohnung über Nacht in ein Projekt verwandelt. Auf dem Tisch liegt ein Plakat mit dem Titel „Weihnachtsinspektion: Aufgabenverteilung“.",
       ["Lurch 1", "„Es gibt drei Aufgaben: Dekoration, Essen, Putzen. Jeder von uns übernimmt eine.“"],
-      ["Lurch 2", "„Und du kontrollierst trotzdem alle drei.“"],
+      ["Lurch 2", "„Und du kontrollierst, ob wir alles richtig machen?“"],
       ["Lurch 1", "„Ich kontrolliere nicht. Ich begleite.“"],
-      ["Der Halbe", "„Du stehst die ganze Zeit hinter uns.“"],
+      ["Der Halbe", "„Du schaust uns in unregelmäßigen Abständen über die Schulter.“"],
       ["Lurch 1", "„Das ist Begleitung.“"],
       ["Der Halbe", "„Das ist Begleitung mit Atem im Nacken!“"],
-      "Der Halbe hat den Socken aus dem Flur mitgebracht. Er hält ihn sich an die Nase.",
+      "Während des Gesprächs holt der Halbe den Socken aus dem Flur. Er hält ihn sich unter die Nase.",
       ["Der Halbe", "„Der Socken riecht nach Fischbrötchen.“"],
       ["Lurch 2", "„Wir essen keinen Fisch. Rein hypothetisch gehört er jemandem, der Fisch isst.“"],
       ["Lurch 1", "„Das sind fast alle im Teich.“"],
-      "Die Verteilung dauert zwanzig Minuten. Lurch 1 hat für jede Variante eine Begründung, und Lurch 2 hat für jede Begründung eine Gegenbegründung. Am Ende steht der Plan fest. Er ist tadellos.",
-      "Am Abend ist die Küche voller Rauch, die Deko hängt verkehrt, und aus dem Bad kommt ein Geruch, den niemand einordnen kann. Der Plan war gut. Er ist nur an der Wirklichkeit gescheitert.",
+      "Nach ständigen Themenwechseln konzentrieren sie sich wieder auf die Arbeitsverteilung. Lurch 1 hat für jede Möglichkeit eine Begründung, Lurch 2 und der Halbe haben für jede Begründung eine Gegenbegründung. Ganz gleich, wie sie es drehen und wenden, der Plan scheitert an der Realität.",
     ],
     interaction: { kind: "choice", title: "Wer macht was?",
-      prompt: ["Verteile die drei Aufgaben auf die drei Lurche. Es gibt sechs mögliche Verteilungen. Danach siehst du die drei Pannenmeldungen, die zu deiner Wahl passen."],
-      options: (() => {
-        const PANNEN = {
-          deko: {
-            "Lurch 1": "Er hat die Girlande so lange gerade gerückt, bis sie von der Wand gefallen ist.",
-            "Lurch 2": "Er hat zwei Stunden begründet, warum Dekoration sinnvoll ist, und danach nichts aufgehängt.",
-            "der Halbe": "Er hat alles dekoriert, aber nur bis zu einer Höhe von 15 Zentimetern.",
-          },
-          essen: {
-            "Lurch 1": "Er hat sechs Notfallgerichte vorbereitet und vergessen, ein normales Essen zu kochen.",
-            "Lurch 2": "Er hat ein neues Rezept erfunden. Es hat noch keinen Namen und leider auch keinen Geschmack.",
-            "der Halbe": "Er hat das Essen vorbereitet und dabei schon vor dem Essen gegessen.",
-          },
-          putzen: {
-            "Lurch 1": "Er hat so gründlich geputzt, dass der Boden jetzt rutschiger ist als der Teich.",
-            "Lurch 2": "Er hat beim Putzen ein Mulmkorn entdeckt, es „Kurt der Krümel“ genannt und auf Plausibilität sowie auf vierzehn verschiedene Allergien geprüft.",
-            "der Halbe": "Er hat den Eimer als Boot benutzt und nur den Weg bis zur Küche geputzt.",
-          },
-        };
-        const W = ["Lurch 1", "Lurch 2", "der Halbe"];
-        const perms = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
-        const cap = s => s[0].toUpperCase() + s.slice(1);
-        return perms.map(([d, e, p]) => ({
-          label: `Deko: ${W[d]} · Essen: ${W[e]} · Putzen: ${W[p]}`,
-          response: [
-            `Dekoration (${cap(W[d])}): ${PANNEN.deko[W[d]]}`,
-            `Essen (${cap(W[e])}): ${PANNEN.essen[W[e]]}`,
-            `Putzen (${cap(W[p])}): ${PANNEN.putzen[W[p]]}`,
-          ],
-        }));
-      })(),
-      response: "Die Pannenmeldungen des Abends:",
-      after: "Probier ruhig noch eine andere Verteilung. Es geht jedes Mal etwas schief, aber jedes Mal etwas anderes.",
+      prompt: ["Verteile die drei Aufgaben Dekoration, Essen und Putzen auf die drei Lurche. Es gibt neun Möglichkeiten. Probiere sie aus."],
+      response: "Lurch 1 liest sie vor, nickt ernst und sagt: „Das ist eine sehr gute Idee.“",
+      options: [
+        { label: "Lurch 1 macht das Essen",
+          response: "Pannenmeldung: Lurch 1 hat sechs Notfallgerichte vorbereitet und vergessen, ein normales Essen zu kochen." },
+        { label: "Lurch 2 macht das Essen",
+          response: "Pannenmeldung: Lurch 2 hat das Rezept so lange auf Plausibilität und Allergien geprüft, dass der Ofen von allein ausgegangen ist." },
+        { label: "Der Halbe macht das Essen",
+          response: "Pannenmeldung: Der Halbe hat das Essen schon vor dem Zubereiten aufgegessen." },
+        { label: "Lurch 1 macht die Deko",
+          response: "Pannenmeldung: Lurch 1 hat die Girlande so lange gerade gerückt, bis sie von der Wand gefallen ist." },
+        { label: "Lurch 2 macht die Deko",
+          response: "Pannenmeldung: Lurch 2 hat die Deko so lange durchdacht, dass es inzwischen Januar ist." },
+        { label: "Der Halbe macht die Deko",
+          response: "Pannenmeldung: Der Halbe hat die Wohnung dekoriert, aber nur bis zu einer Höhe von 80 Zentimetern. Der Rest, sagt er, ist für die Fantasie." },
+        { label: "Lurch 1 putzt",
+          response: "Pannenmeldung: Lurch 1 hat so gründlich geputzt, dass sich der Teppich aus Wasserlinsen nicht mehr nachzuwachsen traut." },
+        { label: "Lurch 2 putzt",
+          response: "Pannenmeldung: Lurch 2 hat beim Putzen ein Staubkorn entdeckt und es „Kurt der Krümel“ genannt. Er putzt jetzt um es herum." },
+        { label: "Der Halbe putzt",
+          response: "Pannenmeldung: Der Halbe hat den Eimer als Boot benutzt und nur den Weg bis zur Küche geputzt." },
+      ],
+      after: "Probier ruhig noch eine andere Möglichkeit. Es geht jedes Mal etwas schief.",
     },
   },
 
   /* ---------- 6 ---------- */
   { emoji: "📜", title: "Frau Krötes Zettel", act: ACT1, focus: "alle drei",
     story: [
-      "An der Wohnungstür hängt ein Zettel von Frau Kröte, ihrer Nachbarin aus Raum 435. Er ist drei Seiten lang.",
+      "An der Wohnungstür hängt eine Nachricht von Frau Kröte, die Nachbarin aus Raum 435. Die Nachricht ist drei Seiten lang.",
       "Der Anfang lautet:",
-      { label: "Zettel an der Tür, Seite 1 von 3", note: ["An alle Bewohner des Hauses, insbesondere die der Wohnung 464, im Hinblick auf die Weihnachtszeit und die damit verbundenen Pflichten, die sich aus der Hausordnung ergeben, die ich im Folgenden noch einmal ausdrücklich in Erinnerung rufe, da es in der Vergangenheit, ich möchte nicht sagen immer, aber doch wiederholt, zu Missverständnissen gekommen ist …"] },
+      { label: "Nachricht an der Tür, Seite 1 von 3", note: ["An alle Bewohner des Hauses, insbesondere die der Wohnung 464, im Hinblick auf die bevorstehende Weihnachtszeit und die damit verbundenen Pflichten, die sich aus der Hausordnung ergeben, sehe ich mich veranlasst, einige Punkte noch einmal ausdrücklich in Erinnerung zu rufen. Dies erscheint insbesondere deshalb angebracht, weil es in der Vergangenheit, ich möchte nicht sagen regelmäßig, aber doch wiederholt, zu gewissen Missverständnissen hinsichtlich der einzuhaltenden Pflichten während der Feiertage gekommen ist. Ich möchte daher ausdrücklich darum bitten, die geltende Hausordnung entsprechend zu beachten und insbesondere dort die notwendige Bereitschaft und Rücksichtnahme zu zeigen, wo es um die Belange des geordneten Zusammenlebens, die gemeinsame Nutzung der vorgesehenen Bereiche und die Interessen der gesamten Hausgemeinschaft geht und nicht zuletzt darum, einen angemessenen Beitrag zur besinnlichen Atmosphäre der Weihnachtszeit zu leisten. …"] },
       "Es folgen zwei weitere Seiten in demselben Stil.",
       ["Lurch 1", "„Drei Seiten! Warum schreibt man drei Seiten, wenn man einen Satz meint?“"],
       ["Lurch 2", "„Weil der eine Satz fehlt.“"],
-      ["Der Halbe", "„Ich habe die zweite Seite schon beim Lesen verloren. Ich weiß nicht mal, wo sie ist!“"],
-      ["Lurch 1", "„Und sie hängt es an unsere Tür, als wäre es ein Geschenk!“"],
+      ["Der Halbe", "„Der Halbe: „Ich habe schon den ersten Satz vergessen, bevor ich den zweiten angefangen habe. Ich weiß nicht, was die jetzt von uns will!“"],
       ["Lurch 2", "„Rein hypothetisch ist es eine Aufgabe. Aber ich weiß nicht, welche.“"],
       "Sie gehen zu Raum 435 und klopfen. Frau Kröte öffnet einen Spalt breit.",
-      ["Frau Kröte", "„Haben Sie den Zettel gelesen?“"],
-      ["Lurch 1", "„Ja, dreimal. Wir haben eine Frage.“"],
-      ["Frau Kröte", "„Das steht alles im Zettel.“"],
+      ["Frau Kröte", "„Haben Sie meine Nachricht gelesen?“"],
+      ["Lurch 1", "„Ja, mehrmals. Wir haben eine Frage.“"],
+      ["Frau Kröte", "„Das steht alles in meiner Nachricht.“"],
       "Sie schließt die Tür. Lurch 1 klopft noch einmal.",
-      ["Frau Kröte", "(durch die Tür) „Zettel!“"],
-      "Die drei stehen im Flur. Lurch 1 atmet tief ein. Lurch 2 zieht den Schal hoch. Der Halbe sagt als Erster etwas.",
+      ["Frau Kröte", "(durch die Tür) „Nachricht!“"],
+      "Die drei stehen im Flur. Lurch 1 atmet tief ein. Lurch 2 zieht den Schal hoch.",
       ["Der Halbe", "„Wir haben soeben eine Verabredung mit einer Tür gehabt.“"],
     ],
-    interaction: { kind: "quiz", title: "Welcher Satz fasst den Zettel zusammen?",
+    interaction: { kind: "quiz", title: "Welcher Satz fasst die Nachricht zusammen?",
       questions: [
         { options: [
-          "„Bitte schmücken Sie bis Freitag die Gemeinschaftsflächen.“",
-          "„Das Haus gehört mir, und alle anderen sind nur zu Besuch.“",
+          "„Bitte schmücken Sie die Gemeinschaftsflächen.“",
+          "„Das Haus gehört mir, also nerve ich alle, bis sie gehen.“",
           "„Bitte keine Kerzen, außer sie sind elektrisch, aber nur auf der Fensterbank.“",
           "„Ich habe vergessen, was ich schreiben wollte.“",
         ], correct: 0 },
       ],
       solution: [
         "Lösung: a.",
-        "Was der Zettel nicht verrät: Bis welchem Freitag? Und welche Gemeinschaftsflächen? Frau Kröte erwähnt beides nirgends.",
+        "Was der Zettel nicht verrät: welche Gemeinschaftsflächen? Frau Kröte erwähnt diese wichtige Info nirgends.",
       ],
     },
   },
@@ -1444,14 +1434,18 @@ function el(tag, cls, text) {
   if (text != null) e.textContent = text;
   return e;
 }
+/* Dialogzeile mit sprecherabhängiger Farbe */
+const SPEAKER_CLASS = { "lurch 1": "sp-l1", "lurch 2": "sp-l2", "der halbe": "sp-halbe" };
+function dialogLine(speaker, text) {
+  const cls = SPEAKER_CLASS[speaker.trim().toLowerCase()];
+  const p = el("p", "line" + (cls ? " " + cls : ""));
+  p.appendChild(el("span", "speaker", speaker + ": "));
+  p.appendChild(document.createTextNode(text));
+  return p;
+}
 /* Textzeile oder (als Array) Aufzählung */
 function textBlock(item) {
-  if (item && item.speaker) {
-    const p = el("p");
-    p.appendChild(el("span", "speaker", item.speaker + ": "));
-    p.appendChild(document.createTextNode(item.text));
-    return p;
-  }
+  if (item && item.speaker) return dialogLine(item.speaker, item.text);
   if (Array.isArray(item)) {
     const ul = el("ul");
     item.forEach(li => ul.appendChild(el("li", null, li)));
@@ -1486,12 +1480,7 @@ function renderStory(box, items) {
   items.forEach(it => {
     if (typeof it === "string") box.appendChild(el("p", null, it));
     else if (it.image) box.appendChild(imageEl(it.image, it.caption, it.alt));
-    else if (Array.isArray(it)) {
-      const p = el("p");
-      p.appendChild(el("span", "speaker", it[0] + ": "));
-      p.appendChild(document.createTextNode(it[1]));
-      box.appendChild(p);
-    }
+    else if (Array.isArray(it)) box.appendChild(dialogLine(it[0], it[1]));
     else if (it.letter) box.appendChild(letterEl());
     else if (it.fact) box.appendChild(factEl(it.fact));
     else if (it.note) {
